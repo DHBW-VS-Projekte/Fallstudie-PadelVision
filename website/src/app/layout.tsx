@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+/*import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -24,6 +24,98 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
+    </html>
+  );
+}
+*/
+
+
+/**
+ * src/app/layout.tsx – GEÄNDERT
+ *
+ * Zweck: Root-Layout für ALLE Seiten (Navbar, Lesefortschritt, Footer,
+ * Skip-Link, Theme-Script ohne Aufflackern).
+ * Server Component: Das Layout selbst hat keine Interaktivität. Die
+ * interaktiven Teile (Navbar, ScrollProgress) sind eigene Client-Inseln.
+ *
+ * Hinweis Homepage: Die Navbar ist `fixed` (liegt über dem Inhalt).
+ * Seiten ohne Hero oben (z. B. die unveränderte src/app/page.tsx) sollten
+ * oben ca. 4rem Abstand haben (z. B. `pt-16`), damit nichts verdeckt wird.
+ */
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+import Navbar from "@/components/layout/NavBar";
+import ScrollProgress from "@/components/layout/ScrollProgress";
+import Footer from "@/components/layout/Footer";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  title: { template: "%s | PadelVision", default: "PadelVision" },
+  description:
+    "PadelVision – Padel-Courts mieten (2 Indoor, 1 Outdoor), Kurse und Turniere. Lerne den Trendsport kennen und buche deinen Court.",
+};
+
+/**
+ * Inline-Script, das VOR dem ersten Zeichnen der Seite läuft.
+ * Warum inline und synchron? Würde das Theme erst nach dem Laden von React
+ * gesetzt, sähe man kurz das falsche Theme ("Aufflackern").
+ * try/catch: localStorage kann z. B. im privaten Modus Fehler werfen.
+ */
+const themeScript = `
+(function () {
+  var root = document.documentElement;
+  root.classList.add('js');
+  try {
+    var stored = localStorage.getItem('padelvision-theme');
+    var dark = stored === 'dark' || (stored !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    root.classList.toggle('dark', dark);
+    root.style.colorScheme = dark ? 'dark' : 'light';
+  } catch (e) {}
+})();
+`;
+
+/**
+ * RootLayout – umschließt jede Seite.
+ * @param children Inhalt der jeweiligen Seite
+ * LayoutProps<"/"> ist ein globaler, von Next.js generierter Typ (nicht importieren).
+ */
+export default function RootLayout({ children }: LayoutProps<"/">) {
+  return (
+    // suppressHydrationWarning: Das Script ändert class/style an <html> vor
+    // der Hydration. Ohne diese Prop würde React einen Mismatch melden.
+    <html
+      lang="de"
+      suppressHydrationWarning
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body className="flex min-h-full flex-col bg-background font-sans text-foreground">
+        {/* ===== Skip-Link: erstes fokussierbares Element, nur bei Tastaturfokus sichtbar ===== */}
+        <a
+          href="#inhalt"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-accent focus:px-5 focus:py-3 focus:text-on-accent"
+        >
+          Zum Inhalt springen
+        </a>
+        <ScrollProgress />
+        <Navbar />
+        <main id="inhalt" className="flex-1">
+          {children}
+        </main>
+        <Footer />
+      </body>
     </html>
   );
 }

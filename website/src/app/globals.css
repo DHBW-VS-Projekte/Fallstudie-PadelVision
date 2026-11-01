@@ -1,4 +1,4 @@
-@import "tailwindcss";
+/*@import "tailwindcss";
 
 :root {
   --background: #ffffff;
@@ -23,4 +23,325 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+Das ist der "Alte Part"*/
+
+/* =====================================================================
+   globals.css – GEÄNDERT
+   Zweck: Zentrale Design-Tokens (Farben, Schatten, Animationen), Dark Mode,
+   Reveal-Animationen, Fokus-Stil und Reduced-Motion-Regeln.
+   Wird in src/app/layout.tsx importiert und gilt damit für ALLE Seiten.
+   Hinweis: In Tailwind v4 gibt es keine tailwind.config.js mehr –
+   alles Konfigurierbare steht hier in CSS.
+   ===================================================================== */
+
+@import "tailwindcss";
+
+/* Klassenbasierter Dark Mode:
+   Standardmäßig reagiert `dark:` in Tailwind v4 auf die Systemeinstellung.
+   Wir wollen aber einen manuellen Schalter. Diese Zeile sagt Tailwind:
+   "dark:"-Klassen gelten, sobald ein Vorfahre (meist <html>) die Klasse .dark hat.
+   :where() hält die Spezifität bei 0, damit nichts unerwartet überschrieben wird. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------- Farbpalette HELL (mediterran, warm) ---------- */
+:root {
+  --background: #faf7f2;   /* warmes Off-White / Sand */
+  --surface: #f2ece2;      /* leicht abgesetzte Fläche für Abschnitte */
+  --card: #fffdf9;         /* Karten, etwas heller als der Hintergrund */
+  --foreground: #2a2622;   /* warmes Anthrazit, kein reines Schwarz (≈ 14:1 auf background) */
+  --muted: #645b53;        /* gedämpfter Text (≈ 6:1 auf background) */
+  --accent: #b14a2a;       /* Terrakotta – weißer Text darauf ≈ 5.3:1 (AA) */
+  --on-accent: #fffdf8;    /* Text auf Akzent-Buttons */
+  --accent-2: #1f5f66;     /* Petrol/Meerblau (≈ 7:1 auf background) */
+  --olive: #5f6d33;        /* Olivgrün, sparsam eingesetzt */
+  --line: #e4dccf;         /* Linien & Ränder */
+  --glass: #8fc3c7;        /* Glaswand in den Grafiken */
+  --mesh: #8a8178;         /* Metallgitter in den Grafiken */
+  --court: #2f7d74;        /* Spielfläche in den Grafiken */
+  --court-line: #fffdf8;   /* Linien auf dem Court */
+  --hero-ink: #fffdf8;     /* Text über Hero-/CTA-Bildern (immer hell) */
+  --hero-shade: #14110e;   /* Abdunkelung für Lesbarkeits-Verläufe */
+  --shadow-color: 42 30 20; /* RGB-Werte für warme Schatten */
+}
+
+/* ---------- Farbpalette DUNKEL ---------- */
+.dark {
+  --background: #141a1f;   /* tiefes, warmes Dunkelblau-Anthrazit, kein #000 */
+  --surface: #1b232a;
+  --card: #212a32;
+  --foreground: #f3eee6;   /* warmes Off-White (≈ 15:1) */
+  --muted: #b4aba0;        /* (≈ 8:1) */
+  --accent: #e8825f;       /* gedämpfte, hellere Terrakotta – dunkler Text darauf ≈ 7:1 */
+  --on-accent: #1a1410;
+  --accent-2: #6cc0c0;
+  --olive: #a6b46e;
+  --line: #2e3942;
+  --glass: #4f8f95;
+  --mesh: #7d746b;
+  --court: #24564f;
+  --court-line: #e9e4dc;
+  --shadow-color: 0 0 0;
+}
+
+/* @theme inline: macht die CSS-Variablen als Tailwind-Klassen verfügbar
+   (bg-background, text-muted, fill-accent, border-line …).
+   "inline" bedeutet: Tailwind setzt var(--…) direkt ein, statt den Wert
+   einmalig zu kopieren – nur so wirkt der Theme-Wechsel live. */
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-accent-2: var(--accent-2);
+  --color-olive: var(--olive);
+  --color-line: var(--line);
+  --color-glass: var(--glass);
+  --color-mesh: var(--mesh);
+  --color-court: var(--court);
+  --color-court-line: var(--court-line);
+  --color-hero-ink: var(--hero-ink);
+  --color-hero-shade: var(--hero-shade);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --shadow-soft: 0 10px 30px -12px rgb(var(--shadow-color) / 0.18);
+  --shadow-lift: 0 22px 45px -18px rgb(var(--shadow-color) / 0.32);
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .interactive-card {
+    transition:
+      translate 800ms var(--ease-out-soft),
+      box-shadow 800ms var(--ease-out-soft),
+      border-color 500ms var(--ease-out-soft);
+  }
+
+  .interactive-card:hover {
+    translate: 0 -4px;
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+    box-shadow: var(--shadow-lift);
+  }
+}
+
+/* ---------- Grundlayout ---------- */
+html {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Weiches Scrollen bei Ankerlinks – nur wenn der Nutzer keine reduzierte Bewegung wünscht */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  /* Kein font-family mehr hier: die Geist-Schrift kommt über font-sans (Tailwind) */
+}
+
+/* scroll-margin-top: Beim Springen zu #anker hält der Browser diesen Abstand
+   zum oberen Rand ein – so verschwinden Überschriften nicht unter der fixen
+   Navbar (≈ 4rem) und der klebenden Kapitelnavigation (≈ 3.5rem). */
+section[id] { scroll-margin-top: 8.5rem; }
+
+html:has([data-padel-nav-visible="true"]) .chapter-nav {
+  top: 4rem;
+}
+
+@media (hover: none) {
+  [data-padel-navbar][data-padel-nav-visible="false"] {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .chapter-nav {
+    top: 4rem;
+  }
+}
+
+/* Einheitlicher, gut sichtbarer Tastatur-Fokus (nur bei Tastaturbedienung) */
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 0.5rem;
+}
+
+/* Sanfter Farbübergang NUR während eines Theme-Wechsels.
+   Die Klasse wird von ThemeToggle kurz gesetzt und wieder entfernt –
+   beim ersten Laden animiert dadurch nichts. */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition: background-color 300ms ease, color 300ms ease, border-color 300ms ease, fill 300ms ease !important;
+}
+
+/* Horizontal scrollbare Leisten ohne sichtbare Scrollbar */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+/* ---------- Fallback-Verläufe für Bilder (bis echte Fotos da sind) ---------- */
+.fallback-terra { background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
+.fallback-sea   { background: linear-gradient(160deg, var(--accent-2), var(--glass)); }
+.fallback-olive { background: linear-gradient(135deg, var(--surface), var(--olive)); }
+.fallback-sun   { background: linear-gradient(200deg, var(--accent), var(--olive)); }
+.fallback-dusk  { background: linear-gradient(120deg, var(--hero-shade), var(--accent-2) 60%, var(--accent)); }
+
+/* =====================================================================
+   SCROLL-REVEAL
+  No-JS-Sicherheit: Der versteckte Startzustand gilt erst, nachdem ein
+  Reveal-Ref aktiv ist. Ohne Hydration bleibt der Inhalt sichtbar.
+   ===================================================================== */
+[data-reveal] {
+  transition:
+    opacity 800ms var(--ease-out-soft) var(--reveal-delay, 0ms),
+    transform 800ms var(--ease-out-soft) var(--reveal-delay, 0ms),
+    filter 800ms var(--ease-out-soft) var(--reveal-delay, 0ms),
+    translate 800ms var(--ease-out-soft),
+    box-shadow 800ms var(--ease-out-soft),
+    border-color 500ms var(--ease-out-soft);
+}
+.reveal-ready [data-reveal]:not([data-visible]) {
+  opacity: 0;
+  filter: blur(6px);
+}
+.reveal-ready [data-reveal="up"]:not([data-visible])    { transform: translateY(28px); }
+.reveal-ready [data-reveal="left"]:not([data-visible])  { transform: translateX(-36px); }
+.reveal-ready [data-reveal="right"]:not([data-visible]) { transform: translateX(36px); }
+
+/* ---------- Bild-Reveal ----------
+   clip-path: inset(oben rechts unten links) schneidet den SICHTBAREN Bereich
+   zu, ohne das Layout zu verändern. Wir starten mit "unten 100 % abgeschnitten"
+   und öffnen das Bild wie einen Vorhang nach oben. Gleichzeitig zoomt das Bild
+   von 1.1 auf 1 – das wirkt hochwertig und ruhig. */
+[data-image-reveal] {
+  clip-path: inset(0 0 0 0 round 1.5rem);
+  transition: clip-path 1100ms var(--ease-out-soft);
+}
+[data-image-reveal] .reveal-zoom {
+  transition: transform 1400ms var(--ease-out-soft);
+}
+.reveal-ready [data-image-reveal]:not([data-visible]) {
+  clip-path: inset(0 0 100% 0 round 1.5rem);
+}
+.reveal-ready [data-image-reveal]:not([data-visible]) .reveal-zoom {
+  transform: scale(1.1);
+}
+
+/* ---------- Linie "zeichnen" (SVG) ----------
+   pathLength="1" normiert die Pfadlänge auf 1. Mit stroke-dasharray: 1 ist
+   der Pfad ein einziger Strich; stroke-dashoffset: 1 schiebt ihn komplett
+   "aus dem Bild". Animiert man den Offset auf 0, scheint die Linie sich
+   zu zeichnen. */
+.draw-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.reveal-ready [data-reveal]:not([data-visible]) .draw-line { stroke-dashoffset: 1; }
+.reveal-ready [data-reveal][data-visible] .draw-line {
+  animation: draw-line 1.8s var(--ease-out-soft) both;
+  animation-delay: var(--draw-delay, 200ms);
+}
+@keyframes draw-line {
+  from { stroke-dashoffset: 1; }
+  to   { stroke-dashoffset: 0; }
+}
+
+/* Elemente, die nach dem Zeichnen auftauchen (z. B. Aufprallpunkt, Stationen) */
+.reveal-ready [data-reveal]:not([data-visible]) .pop-in { opacity: 0; }
+.reveal-ready [data-reveal][data-visible] .pop-in {
+  animation: pop-in 500ms var(--ease-out-soft) both;
+  animation-delay: var(--pop-delay, 1.4s);
+}
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.4); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.pop-in { transform-box: fill-box; transform-origin: center; }
+
+/* ---------- Hero ---------- */
+/* Ken-Burns: sehr langsamer Zoom, hin und zurück (alternate) */
+@keyframes ken-burns {
+  from { transform: scale(1); }
+  to   { transform: scale(1.12) translate3d(-1.5%, -1%, 0); }
+}
+.ken-burns { animation: ken-burns 26s ease-in-out infinite alternate; }
+
+/* Wort-für-Wort-Headline: reine CSS-Animation, funktioniert ohne JS.
+   Jedes Wort bekommt per style eine eigene animation-delay. */
+@keyframes word-in {
+  from { opacity: 0; transform: translateY(0.4em); filter: blur(8px); }
+  to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+.word-in {
+  display: inline-block;
+  animation: word-in 900ms var(--ease-out-soft) both;
+}
+.fade-up { animation: word-in 900ms var(--ease-out-soft) both; }
+
+/* Scroll-Hinweis (kleiner Punkt in der "Maus") */
+@keyframes scroll-dot {
+  0% { opacity: 0; transform: translateY(0); }
+  30% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(12px); }
+}
+.scroll-dot { animation: scroll-dot 1.8s ease-in-out infinite; }
+
+/* ---------- Schwebende Deko-Formen ---------- */
+@keyframes float-a {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(14px, -22px, 0) rotate(8deg); }
+}
+@keyframes float-b {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(-18px, 16px, 0); }
+}
+.float-a { animation: float-a 14s ease-in-out infinite; }
+.float-b { animation: float-b 18s ease-in-out infinite; }
+
+/* ---------- FAQ (native <details>) ----------
+   ::details-content ist der Inhaltsbereich von <details>. Mit
+   interpolate-size können moderne Browser von height:0 auf auto animieren.
+   Ältere Browser klappen einfach ohne Animation auf (Progressive Enhancement). */
+:root { interpolate-size: allow-keywords; }
+details.faq::details-content {
+  block-size: 0;
+  overflow: hidden;
+  transition: block-size 500ms var(--ease-out-soft), content-visibility 500ms allow-discrete;
+}
+details.faq[open]::details-content { block-size: auto; }
+details.faq summary::-webkit-details-marker { display: none; }
+
+/* =====================================================================
+   REDUZIERTE BEWEGUNG
+   Alles sofort sichtbar, keine Animationen, Video aus.
+   ===================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+  .reveal-ready [data-reveal]:not([data-visible]),
+  .reveal-ready [data-image-reveal]:not([data-visible]) {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    clip-path: inset(0 0 0 0 round 1.5rem);
+  }
+  .reveal-ready [data-image-reveal]:not([data-visible]) .reveal-zoom { transform: none; }
+  .reveal-ready [data-reveal] .draw-line { stroke-dashoffset: 0; animation: none; }
+  .reveal-ready [data-reveal] .pop-in { opacity: 1; animation: none; }
+  .ken-burns, .float-a, .float-b, .scroll-dot { animation: none; }
+  .hero-video { display: none; }
 }
