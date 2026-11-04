@@ -1,1028 +1,347 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap");
-@import "tailwindcss";
+/*@import "tailwindcss";
+
 :root {
-  --green: #092e25;
-  --deep: #061e19;
-  --cream: #f4f0e7;
-  --coral: #ec8167;
-  --ink: #15261f;
+  --background: #ffffff;
+  --foreground: #171717;
 }
-* {
-  box-sizing: border-box;
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
 }
-html {
-  scroll-behavior: smooth;
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
 }
+
 body {
-  margin: 0;
-  background: var(--cream);
-  color: var(--ink);
-  font-family: "DM Sans", Arial, sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
 }
-a {
-  color: inherit;
-  text-decoration: none;
+Das ist der "Alte Part"*/
+
+/* =====================================================================
+   globals.css – GEÄNDERT
+   Zweck: Zentrale Design-Tokens (Farben, Schatten, Animationen), Dark Mode,
+   Reveal-Animationen, Fokus-Stil und Reduced-Motion-Regeln.
+   Wird in src/app/layout.tsx importiert und gilt damit für ALLE Seiten.
+   Hinweis: In Tailwind v4 gibt es keine tailwind.config.js mehr –
+   alles Konfigurierbare steht hier in CSS.
+   ===================================================================== */
+
+@import "tailwindcss";
+
+/* Klassenbasierter Dark Mode:
+   Standardmäßig reagiert `dark:` in Tailwind v4 auf die Systemeinstellung.
+   Wir wollen aber einen manuellen Schalter. Diese Zeile sagt Tailwind:
+   "dark:"-Klassen gelten, sobald ein Vorfahre (meist <html>) die Klasse .dark hat.
+   :where() hält die Spezifität bei 0, damit nichts unerwartet überschrieben wird. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------- Farbpalette HELL (mediterran, warm) ---------- */
+:root {
+  --background: #faf7f2;   /* warmes Off-White / Sand */
+  --surface: #f2ece2;      /* leicht abgesetzte Fläche für Abschnitte */
+  --card: #fffdf9;         /* Karten, etwas heller als der Hintergrund */
+  --foreground: #2a2622;   /* warmes Anthrazit, kein reines Schwarz (≈ 14:1 auf background) */
+  --muted: #645b53;        /* gedämpfter Text (≈ 6:1 auf background) */
+  --accent: #b14a2a;       /* Terrakotta – weißer Text darauf ≈ 5.3:1 (AA) */
+  --on-accent: #fffdf8;    /* Text auf Akzent-Buttons */
+  --accent-2: #1f5f66;     /* Petrol/Meerblau (≈ 7:1 auf background) */
+  --olive: #5f6d33;        /* Olivgrün, sparsam eingesetzt */
+  --line: #e4dccf;         /* Linien & Ränder */
+  --glass: #8fc3c7;        /* Glaswand in den Grafiken */
+  --mesh: #8a8178;         /* Metallgitter in den Grafiken */
+  --court: #2f7d74;        /* Spielfläche in den Grafiken */
+  --court-line: #fffdf8;   /* Linien auf dem Court */
+  --hero-ink: #fffdf8;     /* Text über Hero-/CTA-Bildern (immer hell) */
+  --hero-shade: #14110e;   /* Abdunkelung für Lesbarkeits-Verläufe */
+  --shadow-color: 42 30 20; /* RGB-Werte für warme Schatten */
 }
-button,
-input,
-select {
-  font: inherit;
+
+/* ---------- Farbpalette DUNKEL ---------- */
+.dark {
+  --background: #141a1f;   /* tiefes, warmes Dunkelblau-Anthrazit, kein #000 */
+  --surface: #1b232a;
+  --card: #212a32;
+  --foreground: #f3eee6;   /* warmes Off-White (≈ 15:1) */
+  --muted: #b4aba0;        /* (≈ 8:1) */
+  --accent: #e8825f;       /* gedämpfte, hellere Terrakotta – dunkler Text darauf ≈ 7:1 */
+  --on-accent: #1a1410;
+  --accent-2: #6cc0c0;
+  --olive: #a6b46e;
+  --line: #2e3942;
+  --glass: #4f8f95;
+  --mesh: #7d746b;
+  --court: #24564f;
+  --court-line: #e9e4dc;
+  --shadow-color: 0 0 0;
 }
-button,
-a,
-select {
-  transition: all 0.2s ease;
+
+/* @theme inline: macht die CSS-Variablen als Tailwind-Klassen verfügbar
+   (bg-background, text-muted, fill-accent, border-line …).
+   "inline" bedeutet: Tailwind setzt var(--…) direkt ein, statt den Wert
+   einmalig zu kopieren – nur so wirkt der Theme-Wechsel live. */
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-accent-2: var(--accent-2);
+  --color-olive: var(--olive);
+  --color-line: var(--line);
+  --color-glass: var(--glass);
+  --color-mesh: var(--mesh);
+  --color-court: var(--court);
+  --color-court-line: var(--court-line);
+  --color-hero-ink: var(--hero-ink);
+  --color-hero-shade: var(--hero-shade);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --shadow-soft: 0 10px 30px -12px rgb(var(--shadow-color) / 0.18);
+  --shadow-lift: 0 22px 45px -18px rgb(var(--shadow-color) / 0.32);
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
-button {
-  cursor: pointer;
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .interactive-card {
+    transition:
+      translate 800ms var(--ease-out-soft),
+      box-shadow 800ms var(--ease-out-soft),
+      border-color 500ms var(--ease-out-soft);
+  }
+
+  .interactive-card:hover {
+    translate: 0 -4px;
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+    box-shadow: var(--shadow-lift);
+  }
 }
-::selection {
-  background: var(--coral);
-  color: var(--deep);
+
+/* ---------- Grundlayout ---------- */
+html {
+  background: var(--background);
+  color: var(--foreground);
 }
-.section-wrap {
-  max-width: 1440px;
-  padding: 0 64px;
-  margin: auto;
+
+/* Weiches Scrollen bei Ankerlinks – nur wenn der Nutzer keine reduzierte Bewegung wünscht */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
 }
-.announcement {
-  background: var(--coral);
-  height: 31px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 2px;
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  /* Kein font-family mehr hier: die Geist-Schrift kommt über font-sans (Tailwind) */
 }
-.announcement a {
-  margin-left: 20px;
-  text-decoration: underline;
-  text-underline-offset: 3px;
+
+/* scroll-margin-top: Beim Springen zu #anker hält der Browser diesen Abstand
+   zum oberen Rand ein – so verschwinden Überschriften nicht unter der fixen
+   Navbar (≈ 4rem) und der klebenden Kapitelnavigation (≈ 3.5rem). */
+section[id] { scroll-margin-top: 8.5rem; }
+
+html:has([data-padel-nav-visible="true"]) .chapter-nav {
+  top: 4rem;
 }
-.pulse,
-.dot {
+
+@media (hover: none) {
+  [data-padel-navbar][data-padel-nav-visible="false"] {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .chapter-nav {
+    top: 4rem;
+  }
+}
+
+/* Einheitlicher, gut sichtbarer Tastatur-Fokus (nur bei Tastaturbedienung) */
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 0.5rem;
+}
+
+/* Sanfter Farbübergang NUR während eines Theme-Wechsels.
+   Die Klasse wird von ThemeToggle kurz gesetzt und wieder entfernt –
+   beim ersten Laden animiert dadurch nichts. */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition: background-color 300ms ease, color 300ms ease, border-color 300ms ease, fill 300ms ease !important;
+}
+
+/* Horizontal scrollbare Leisten ohne sichtbare Scrollbar */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+/* ---------- Fallback-Verläufe für Bilder (bis echte Fotos da sind) ---------- */
+.fallback-terra { background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
+.fallback-sea   { background: linear-gradient(160deg, var(--accent-2), var(--glass)); }
+.fallback-olive { background: linear-gradient(135deg, var(--surface), var(--olive)); }
+.fallback-sun   { background: linear-gradient(200deg, var(--accent), var(--olive)); }
+.fallback-dusk  { background: linear-gradient(120deg, var(--hero-shade), var(--accent-2) 60%, var(--accent)); }
+
+/* =====================================================================
+   SCROLL-REVEAL
+  No-JS-Sicherheit: Der versteckte Startzustand gilt erst, nachdem ein
+  Reveal-Ref aktiv ist. Ohne Hydration bleibt der Inhalt sichtbar.
+   ===================================================================== */
+[data-reveal] {
+  transition:
+    opacity 800ms var(--ease-out-soft) var(--reveal-delay, 0ms),
+    transform 800ms var(--ease-out-soft) var(--reveal-delay, 0ms),
+    filter 800ms var(--ease-out-soft) var(--reveal-delay, 0ms),
+    translate 800ms var(--ease-out-soft),
+    box-shadow 800ms var(--ease-out-soft),
+    border-color 500ms var(--ease-out-soft);
+}
+.reveal-ready [data-reveal]:not([data-visible]) {
+  opacity: 0;
+  filter: blur(6px);
+}
+.reveal-ready [data-reveal="up"]:not([data-visible])    { transform: translateY(28px); }
+.reveal-ready [data-reveal="left"]:not([data-visible])  { transform: translateX(-36px); }
+.reveal-ready [data-reveal="right"]:not([data-visible]) { transform: translateX(36px); }
+
+/* ---------- Bild-Reveal ----------
+   clip-path: inset(oben rechts unten links) schneidet den SICHTBAREN Bereich
+   zu, ohne das Layout zu verändern. Wir starten mit "unten 100 % abgeschnitten"
+   und öffnen das Bild wie einen Vorhang nach oben. Gleichzeitig zoomt das Bild
+   von 1.1 auf 1 – das wirkt hochwertig und ruhig. */
+[data-image-reveal] {
+  clip-path: inset(0 0 0 0 round 1.5rem);
+  transition: clip-path 1100ms var(--ease-out-soft);
+}
+[data-image-reveal] .reveal-zoom {
+  transition: transform 1400ms var(--ease-out-soft);
+}
+.reveal-ready [data-image-reveal]:not([data-visible]) {
+  clip-path: inset(0 0 100% 0 round 1.5rem);
+}
+.reveal-ready [data-image-reveal]:not([data-visible]) .reveal-zoom {
+  transform: scale(1.1);
+}
+
+/* ---------- Linie "zeichnen" (SVG) ----------
+   pathLength="1" normiert die Pfadlänge auf 1. Mit stroke-dasharray: 1 ist
+   der Pfad ein einziger Strich; stroke-dashoffset: 1 schiebt ihn komplett
+   "aus dem Bild". Animiert man den Offset auf 0, scheint die Linie sich
+   zu zeichnen. */
+.draw-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.reveal-ready [data-reveal]:not([data-visible]) .draw-line { stroke-dashoffset: 1; }
+.reveal-ready [data-reveal][data-visible] .draw-line {
+  animation: draw-line 1.8s var(--ease-out-soft) both;
+  animation-delay: var(--draw-delay, 200ms);
+}
+@keyframes draw-line {
+  from { stroke-dashoffset: 1; }
+  to   { stroke-dashoffset: 0; }
+}
+
+/* Elemente, die nach dem Zeichnen auftauchen (z. B. Aufprallpunkt, Stationen) */
+.reveal-ready [data-reveal]:not([data-visible]) .pop-in { opacity: 0; }
+.reveal-ready [data-reveal][data-visible] .pop-in {
+  animation: pop-in 500ms var(--ease-out-soft) both;
+  animation-delay: var(--pop-delay, 1.4s);
+}
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.4); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.pop-in { transform-box: fill-box; transform-origin: center; }
+
+/* ---------- Hero ---------- */
+/* Ken-Burns: sehr langsamer Zoom, hin und zurück (alternate) */
+@keyframes ken-burns {
+  from { transform: scale(1); }
+  to   { transform: scale(1.12) translate3d(-1.5%, -1%, 0); }
+}
+.ken-burns { animation: ken-burns 26s ease-in-out infinite alternate; }
+
+/* Wort-für-Wort-Headline: reine CSS-Animation, funktioniert ohne JS.
+   Jedes Wort bekommt per style eine eigene animation-delay. */
+@keyframes word-in {
+  from { opacity: 0; transform: translateY(0.4em); filter: blur(8px); }
+  to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+.word-in {
   display: inline-block;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--green);
+  animation: word-in 900ms var(--ease-out-soft) both;
 }
-.header {
-  height: 87px;
-  background: var(--cream);
-  position: relative;
-  z-index: 20;
+.fade-up { animation: word-in 900ms var(--ease-out-soft) both; }
+
+/* Scroll-Hinweis (kleiner Punkt in der "Maus") */
+@keyframes scroll-dot {
+  0% { opacity: 0; transform: translateY(0); }
+  30% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(12px); }
 }
-.header-inner {
-  height: 100%;
-  padding: 0 64px;
-  max-width: 1560px;
-  margin: auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
+.scroll-dot { animation: scroll-dot 1.8s ease-in-out infinite; }
+
+/* ---------- Schwebende Deko-Formen ---------- */
+@keyframes float-a {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(14px, -22px, 0) rotate(8deg); }
 }
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  color: var(--green);
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 23px;
-  font-weight: 800;
-  letter-spacing: -1.5px;
-  line-height: 0.9;
+@keyframes float-b {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(-18px, 16px, 0); }
 }
-.brand-thin {
-  font-weight: 400;
-}
-.brand small {
-  display: block;
-  font-family: "DM Sans", sans-serif;
-  font-size: 7px;
-  letter-spacing: 2.2px;
-  margin-top: 7px;
-  font-weight: 700;
-}
-.brand-mark {
-  width: 35px;
-  height: 35px;
-  border: 3px solid currentColor;
-  border-radius: 50%;
-  position: relative;
-  transform: rotate(-32deg);
-}
-.brand-mark span {
-  position: absolute;
-  width: 27px;
-  height: 3px;
-  background: currentColor;
-  top: 10px;
-  left: 0;
-  transform: rotate(-37deg);
-}
-.brand-mark span + span {
-  top: 19px;
-  transform: rotate(-37deg);
-}
-.nav {
-  display: flex;
-  align-items: center;
-  gap: 31px;
-}
-.nav a,
-.header-book {
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 1px;
-}
-.nav a:hover,
-.text-link:hover,
-.underlined-link:hover {
-  color: var(--coral);
-}
-.header-book {
-  background: var(--green);
-  padding: 16px 23px;
-  border-radius: 3px;
-  color: #fff;
-}
-.header-book span {
-  margin-left: 20px;
-}
-.header-book:hover,
-.button-green:hover {
-  background: #185440;
-}
-.menu-button {
-  display: none;
-  border: 0;
-  background: none;
-  font-size: 25px;
-}
-.hero {
-  min-height: 695px;
-  color: #fff;
-  position: relative;
+.float-a { animation: float-a 14s ease-in-out infinite; }
+.float-b { animation: float-b 18s ease-in-out infinite; }
+
+/* ---------- FAQ (native <details>) ----------
+   ::details-content ist der Inhaltsbereich von <details>. Mit
+   interpolate-size können moderne Browser von height:0 auf auto animieren.
+   Ältere Browser klappen einfach ohne Animation auf (Progressive Enhancement). */
+:root { interpolate-size: allow-keywords; }
+details.faq::details-content {
+  block-size: 0;
   overflow: hidden;
-  background: var(--green);
-}
-.hero-photo,
-.booking-bg {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-  z-index: 0;
-}
-.hero-photo {
-  background-position: center 40%;
-}
-.hero-inner {
-  position: relative;
-  z-index: 1;
-  padding: 110px 8% 100px;
-  max-width: 1500px;
-  margin: auto;
-}
-.hero-label,
-.eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-weight: 800;
-  letter-spacing: 2.9px;
-  font-size: 11px;
-}
-.line {
-  height: 1px;
-  width: 46px;
-  background: var(--coral);
-}
-h1,
-h2,
-h3,
-p {
-  margin-top: 0;
-}
-.hero h1,
-.intro h2,
-.section-top h2,
-.community h2,
-.events h2,
-.booking h2 {
-  font-family: "Space Grotesk", sans-serif;
-  font-weight: 700;
-  letter-spacing: -0.08em;
-  line-height: 0.88;
-}
-.hero h1 {
-  font-size: clamp(74px, 9vw, 145px);
-  margin: 30px 0;
-}
-.hero h1 em,
-.intro h2 em,
-.section-top h2 em,
-.community h2 em,
-.events h2 em,
-.booking h2 em,
-.footer-cta em {
-  font-family: Georgia, serif;
-  font-weight: 400;
-  letter-spacing: -0.08em;
-}
-.period {
-  color: var(--coral);
-}
-.hero p {
-  font-size: 16px;
-  max-width: 420px;
-  line-height: 1.7;
-  color: #ecebe5;
-}
-.hero-actions {
-  display: flex;
-  align-items: center;
-  gap: 32px;
-  margin-top: 31px;
-}
-.button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 38px;
-  border: 0;
-  border-radius: 3px;
-  padding: 19px 24px;
-  font-weight: 800;
-  font-size: 11px;
-  letter-spacing: 0.7px;
-}
-.button-coral {
-  background: var(--coral);
-  color: var(--deep);
-}
-.button-coral:hover {
-  background: #ff9b83;
-  transform: translateY(-2px);
-}
-.text-link {
-  font-size: 11px;
-  letter-spacing: 1px;
-  font-weight: 800;
-}
-.text-link span {
-  margin-left: 13px;
-}
-.text-link-light {
-  color: #fff;
-}
-.hero-vertical {
-  position: absolute;
-  right: 25px;
-  top: 50%;
-  transform: translateY(-50%);
-  writing-mode: vertical-rl;
-  letter-spacing: 3px;
-  font-size: 9px;
-  font-weight: 700;
-}
-.hero-counter {
-  position: absolute;
-  left: 8%;
-  bottom: 30px;
-  right: 8%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 10px;
-  letter-spacing: 2px;
-}
-.hero-counter strong {
-  font-size: 18px;
-}
-.hero-counter strong span {
-  opacity: 0.45;
-  font-size: 12px;
-}
-.hero-sticker {
-  position: absolute;
-  right: 10%;
-  bottom: 110px;
-  width: 150px;
-  height: 150px;
-  background: #d5dd69;
-  color: var(--green);
-  border-radius: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  transform: rotate(12deg);
-  font-family: "Space Grotesk";
-  font-size: 24px;
-  font-weight: 800;
-  line-height: 1;
-}
-.hero-sticker i {
-  font: italic 21px Georgia;
-  margin-top: 7px;
-}
-.ticker {
-  background: var(--green);
-  color: #f6f2e6;
-  white-space: nowrap;
-  overflow: hidden;
-  padding: 21px 0;
-  font-size: 16px;
-  font-family: "Space Grotesk";
-  font-weight: 800;
-  letter-spacing: 3px;
-}
-.ticker div {
-  text-align: center;
-  min-width: 1300px;
-}
-.ticker span {
-  color: var(--coral);
-  padding: 0 24px;
-}
-.intro {
-  padding-top: 116px;
-  padding-bottom: 100px;
-}
-.eyebrow {
-  color: var(--green);
-}
-.intro-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 80px;
-  align-items: end;
-  margin-top: 33px;
-}
-.intro h2 {
-  font-size: clamp(70px, 7.4vw, 117px);
-  margin: 0;
-}
-.intro h2 em {
-  color: #8b9671;
-}
-.intro-right {
-  padding-bottom: 10px;
-  max-width: 430px;
-}
-.intro-right p:first-child {
-  font-size: 22px;
-  font-weight: 600;
-  line-height: 1.42;
-}
-.intro-right p:nth-child(2) {
-  font-size: 14px;
-  line-height: 1.85;
-  color: #5d665c;
-}
-.underlined-link {
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.8px;
-  display: inline-block;
-  border-bottom: 1px solid;
-  padding-bottom: 10px;
-  margin-top: 13px;
-}
-.underlined-link span {
-  margin-left: 30px;
-}
-.feature-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  margin-top: 92px;
-  border-top: 1px solid #ccd1c6;
-}
-.feature-row > div {
-  padding: 33px 30px 0;
-  border-right: 1px solid #ccd1c6;
-  min-height: 150px;
-}
-.feature-row > div:first-child {
-  padding-left: 0;
-}
-.feature-row > div:last-child {
-  border-right: 0;
-}
-.feature-icon {
-  display: block;
-  font-size: 33px;
-  color: #bd634e;
-  margin-bottom: 16px;
-}
-.feature-row strong {
-  font-size: 19px;
-  letter-spacing: -0.6px;
-}
-.feature-row p {
-  font-size: 13px;
-  color: #657065;
-  margin-top: 7px;
-}
-.courts-section {
-  background: var(--green);
-  color: #fff;
-  padding: 110px 0 90px;
-}
-.eyebrow-light {
-  color: #e0e9d3;
-}
-.eyebrow-light .dot {
-  background: var(--coral);
-}
-.section-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
-  margin-bottom: 42px;
-  gap: 60px;
-}
-.section-top h2,
-.community h2,
-.events h2,
-.booking h2 {
-  font-size: clamp(60px, 6.4vw, 99px);
-  margin: 28px 0 0;
-}
-.section-top h2 em {
-  color: #d9dea1;
-}
-.section-top > p {
-  max-width: 310px;
-  line-height: 1.8;
-  font-size: 15px;
-  color: #c5d5c9;
-}
-.court-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-.court-card {
-  height: 510px;
-  position: relative;
-  overflow: hidden;
-  background: #285044;
-}
-.court-image {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-  transition: transform 0.4s;
-}
-.court-card:hover .court-image {
-  transform: scale(1.04);
-}
-.court-image-second {
-  background-position: 50% 40%;
-}
-.court-number {
-  position: absolute;
-  left: 30px;
-  top: 30px;
-  font-size: 11px;
-  letter-spacing: 2px;
-  font-weight: 800;
-}
-.court-info {
-  position: absolute;
-  bottom: 35px;
-  left: 34px;
-  right: 30px;
-}
-.court-info h3 {
-  font-family: "Space Grotesk";
-  font-size: 37px;
-  letter-spacing: -2px;
-  margin-bottom: 9px;
-}
-.court-info p {
-  font-size: 14px;
-  color: #eee;
-}
-.court-info a {
-  display: inline-flex;
-  gap: 25px;
-  border-bottom: 1px solid;
-  padding-bottom: 9px;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  margin-top: 20px;
-}
-.prototype-note {
-  color: #abbeb2;
-  font-size: 11px;
-  margin: 20px 0 0;
-}
-.community {
-  padding-top: 135px;
-  padding-bottom: 135px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 9%;
-  align-items: center;
-}
-.community-images {
-  position: relative;
-  height: 655px;
-}
-.community-main {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 85%;
-  height: 80%;
-  background-size: cover;
-  background-position: center;
-}
-.community-small {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 49%;
-  height: 49%;
-  border: 10px solid var(--cream);
-  background-size: cover;
-  background-position: center;
-}
-.community-label {
-  position: absolute;
-  bottom: 70px;
-  left: -20px;
-  background: var(--coral);
-  padding: 26px;
-  transform: rotate(-8deg);
-  font-family: "Space Grotesk";
-  font-size: 23px;
-  line-height: 1.05;
-  font-weight: 800;
-}
-.community h2 {
-  font-size: clamp(54px, 5.3vw, 83px);
-  margin: 30px 0;
-}
-.community h2 em {
-  color: #788862;
-}
-.community-copy > p {
-  font-size: 16px;
-  line-height: 1.85;
-  max-width: 460px;
-  color: #58645a;
-}
-.button-green {
-  background: var(--green);
-  color: #fff;
-  margin-top: 20px;
-}
-.community-quote {
-  border-top: 1px solid #bdc4b8;
-  margin-top: 75px;
-  padding-top: 20px;
-  color: #8c9582;
-  font-size: 16px;
-  font-weight: 800;
-  letter-spacing: 2px;
-}
-.events {
-  background: #e7e8db;
-  padding: 110px 0;
-}
-.events-header {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 30px;
-  margin-bottom: 55px;
-}
-.events-header h2 {
-  margin: 25px 0 0;
-}
-.events-header h2 em {
-  color: #849075;
-}
-.events-header > p {
-  max-width: 250px;
-  font-size: 15px;
-  line-height: 1.7;
-}
-.event-item {
-  display: grid;
-  grid-template-columns: 115px 1fr 60px;
-  align-items: center;
-  border-top: 1px solid #b8c1b3;
-  padding: 30px 5px;
-}
-.event-item:last-child {
-  border-bottom: 1px solid #b8c1b3;
-}
-.event-symbol {
-  font-family: "Space Grotesk";
-  font-size: 52px;
-  color: #9aa897;
-}
-.event-item div:nth-child(2) > span {
-  font-size: 10px;
-  letter-spacing: 2px;
-  color: #9a654f;
-  font-weight: 800;
-}
-.event-item h3 {
-  font-family: "Space Grotesk";
-  font-size: 30px;
-  letter-spacing: -1.2px;
-  margin: 7px 0 4px;
-}
-.event-item p {
-  margin: 0;
-  font-size: 13px;
-  color: #6a746c;
-}
-.event-arrow {
-  font-size: 32px;
-  text-align: right;
-}
-.dark-note {
-  color: #6b776e;
-}
-.booking {
-  position: relative;
-  background: var(--deep);
-  color: #fff;
-  padding: 120px 0;
-}
-.booking-layout {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr 430px;
-  gap: 11%;
-  align-items: center;
-}
-.booking h2 {
-  font-size: clamp(65px, 6vw, 96px);
-  margin: 35px 0;
-}
-.booking h2 em {
-  color: #d6dd9a;
-}
-.booking-layout > div:first-child > p {
-  font-size: 17px;
-  line-height: 1.8;
-  max-width: 390px;
-  color: #ced9d0;
-}
-.booking-panel {
-  background: var(--cream);
-  color: var(--green);
-  padding: 35px;
-}
-.booking-panel-head {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  font-size: 9px;
-  letter-spacing: 1.5px;
-  font-weight: 800;
-  color: #69786d;
-}
-.booking-panel h3 {
-  font-size: 34px;
-  font-family: "Space Grotesk";
-  letter-spacing: -2px;
-  margin: 28px 0;
-}
-.booking-panel label {
-  display: block;
-  font-size: 10px;
-  letter-spacing: 1.5px;
-  font-weight: 800;
-  margin: 14px 0 8px;
-}
-.booking-panel input,
-.booking-panel select {
-  width: 100%;
-  background: #fff;
-  border: 1px solid #ccd2c5;
-  color: var(--green);
-  border-radius: 2px;
-  padding: 15px 12px;
-  min-width: 0;
-  font-size: 13px;
-}
-.booking-fields {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 13px;
-}
-.booking-submit {
-  width: 100%;
-  margin-top: 24px;
-}
-.booking-message {
-  font-size: 11px;
-  line-height: 1.5;
-  color: #637064;
-  min-height: 38px;
-  margin-top: 15px;
-}
-.footer {
-  background: #061c17;
-  color: #fff;
-  padding: 80px 0 28px;
-}
-.brand-inverse {
-  color: #f3f2e9;
-}
-.footer-top {
-  display: flex;
-  align-items: start;
-  justify-content: space-between;
-  gap: 45px;
-  padding-bottom: 85px;
-}
-.footer-top > div:first-child > p {
-  font-size: 11px;
-  letter-spacing: 1.5px;
-  line-height: 2;
-  margin-top: 26px;
-  color: #b1c4b6;
-}
-.footer-nav {
-  display: grid;
-  gap: 15px;
-  font-size: 11px;
-  letter-spacing: 1px;
-  font-weight: 800;
-}
-.footer-cta {
-  font-family: "Space Grotesk";
-  font-weight: 800;
-  font-size: 48px;
-  line-height: 1;
-  letter-spacing: -3px;
-}
-.footer-cta em {
-  color: var(--coral);
-}
-.footer-bottom {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  border-top: 1px solid #37534a;
-  padding-top: 24px;
-  font-size: 9px;
-  letter-spacing: 1.4px;
-  color: #aabfb0;
-}
-.footer-bottom a {
-  color: #fff;
-}
-@media (max-width: 1050px) {
-  .section-wrap {
-    padding-left: 34px;
-    padding-right: 34px;
-  }
-  .header-inner {
-    padding: 0 34px;
-  }
-  .nav {
-    gap: 15px;
-  }
-  .hero-sticker {
-    right: 4%;
-  }
-  .intro-grid {
-    gap: 40px;
-  }
-  .community {
-    gap: 6%;
-  }
-  .community-images {
-    height: 520px;
-  }
-  .booking-layout {
-    grid-template-columns: 1fr 390px;
-    gap: 5%;
-  }
-}
-@media (max-width: 760px) {
-  .announcement {
-    font-size: 8px;
-    letter-spacing: 0.5px;
-  }
-  .announcement a {
-    margin-left: 4px;
-  }
-  .header {
-    height: 70px;
-  }
-  .header-inner {
-    padding: 0 20px;
-  }
-  .brand {
-    font-size: 21px;
-  }
-  .header-book {
-    margin-left: auto;
-    padding: 13px;
-    font-size: 9px;
-  }
-  .header-book span {
-    display: none;
-  }
-  .menu-button {
-    display: block;
-  }
-  .nav {
-    display: none;
-    position: absolute;
-    top: 70px;
-    left: 0;
-    right: 0;
-    background: var(--cream);
-    padding: 30px;
-    flex-direction: column;
-    align-items: flex-start;
-    box-shadow: 0 15px 20px #0001;
-  }
-  .nav-open {
-    display: flex;
-  }
-  .section-wrap {
-    padding-left: 22px;
-    padding-right: 22px;
-  }
-  .hero {
-    min-height: 700px;
-  }
-  .hero-photo {
-    background-position: 58% center;
-  }
-  .hero-inner {
-    padding: 115px 22px 130px;
-  }
-  .hero h1 {
-    font-size: clamp(64px, 14vw, 100px);
-  }
-  .hero p {
-    font-size: 14px;
-    max-width: 350px;
-  }
-  .hero-vertical {
-    display: none;
-  }
-  .hero-sticker {
-    height: 96px;
-    width: 96px;
-    right: 15px;
-    bottom: 46px;
-    font-size: 15px;
-  }
-  .hero-sticker i {
-    font-size: 13px;
-  }
-  .hero-counter {
-    left: 22px;
-    right: 22px;
-  }
-  .hero-counter > span {
-    display: none;
-  }
-  .hero-actions {
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-  .button {
-    padding: 17px 15px;
-    gap: 15px;
-  }
-  .ticker {
-    font-size: 12px;
-    padding: 15px 0;
-  }
-  .intro {
-    padding-top: 80px;
-    padding-bottom: 80px;
-  }
-  .intro-grid,
-  .community,
-  .booking-layout {
-    grid-template-columns: 1fr;
-  }
-  .intro h2 {
-    font-size: clamp(59px, 12vw, 90px);
-  }
-  .intro-right {
-    margin-top: 16px;
-  }
-  .feature-row {
-    margin-top: 50px;
-    grid-template-columns: 1fr;
-  }
-  .feature-row > div {
-    border-right: 0;
-    border-bottom: 1px solid #ccd1c6;
-    padding: 20px 0;
-    min-height: auto;
-  }
-  .courts-section,
-  .events {
-    padding: 80px 0;
-  }
-  .section-top,
-  .events-header {
-    display: block;
-  }
-  .section-top h2,
-  .events h2 {
-    font-size: clamp(55px, 11vw, 80px);
-  }
-  .section-top > p {
-    margin: 25px 0;
-  }
-  .court-grid {
-    grid-template-columns: 1fr;
-  }
-  .court-card {
-    height: 430px;
-  }
-  .community {
-    padding-top: 80px;
-    padding-bottom: 80px;
-  }
-  .community-images {
-    height: 450px;
-  }
-  .community-copy {
-    margin-top: 45px;
-  }
-  .community h2 {
-    font-size: clamp(54px, 10vw, 79px);
-  }
-  .community-quote {
-    margin-top: 45px;
-  }
-  .events-header > p {
-    margin-top: 22px;
-  }
-  .event-item {
-    grid-template-columns: 52px 1fr 30px;
-    gap: 12px;
-  }
-  .event-symbol {
-    font-size: 29px;
-  }
-  .event-item h3 {
-    font-size: 22px;
-  }
-  .event-arrow {
-    font-size: 24px;
-  }
-  .booking {
-    padding: 85px 0;
-  }
-  .booking-layout {
-    gap: 45px;
-  }
-  .booking h2 {
-    font-size: clamp(60px, 11vw, 90px);
-  }
-  .booking-panel {
-    padding: 23px;
-  }
-  .footer-top {
-    flex-wrap: wrap;
-    padding-bottom: 60px;
-  }
-  .footer-cta {
-    font-size: 42px;
-  }
-  .footer-bottom {
-    flex-direction: column;
-  }
-  .footer {
-    padding: 60px 0 30px;
-  }
-}
+  transition: block-size 500ms var(--ease-out-soft), content-visibility 500ms allow-discrete;
+}
+details.faq[open]::details-content { block-size: auto; }
+details.faq summary::-webkit-details-marker { display: none; }
+
+/* =====================================================================
+   REDUZIERTE BEWEGUNG
+   Alles sofort sichtbar, keine Animationen, Video aus.
+   ===================================================================== */
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
   }
-  *,
-  *:before,
-  *:after {
-    transition: none !important;
+  .reveal-ready [data-reveal]:not([data-visible]),
+  .reveal-ready [data-image-reveal]:not([data-visible]) {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    clip-path: inset(0 0 0 0 round 1.5rem);
   }
+  .reveal-ready [data-image-reveal]:not([data-visible]) .reveal-zoom { transform: none; }
+  .reveal-ready [data-reveal] .draw-line { stroke-dashoffset: 0; animation: none; }
+  .reveal-ready [data-reveal] .pop-in { opacity: 1; animation: none; }
+  .ken-burns, .float-a, .float-b, .scroll-dot { animation: none; }
+  .hero-video { display: none; }
 }
