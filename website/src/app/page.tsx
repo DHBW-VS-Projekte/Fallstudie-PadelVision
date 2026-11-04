@@ -8,6 +8,7 @@ const clubPath = "/about";
 const courtsPath = "/courts";
 const eventsPath = "/events";
 const communityPath = "/community";
+const padelPath = "/padel";
 
 function Mark() {
   return (
@@ -128,6 +129,9 @@ export default function Home() {
             </a>
             <a href={courtsPath} onClick={() => setMenuOpen(false)}>
               Courts
+            </a>
+            <a href={padelPath} onClick={() => setMenuOpen(false)}>
+              Padel entdecken
             </a>
             <a href={communityPath} onClick={() => setMenuOpen(false)}>
               Community
@@ -354,6 +358,7 @@ export default function Home() {
             </div>
             <nav aria-label="Footer Navigation">
               <a href={courtsPath}>Courts</a>
+              <a href={padelPath}>Padel entdecken</a>
               <a href={communityPath}>Community</a>
               <a href={eventsPath}>Events</a>
               <a href={clubPath}>About</a>
