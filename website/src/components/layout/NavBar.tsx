@@ -1,4 +1,4 @@
-"use client";
+  "use client";
 /**
  * Navbar.tsx – Hauptnavigation (fixed) mit Theme-Switch und Burger-Menü
  * Verwendung: im Root-Layout, also auf allen Seiten.

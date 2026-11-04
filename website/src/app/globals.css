@@ -345,3 +345,9 @@ details.faq summary::-webkit-details-marker { display: none; }
   .ken-burns, .float-a, .float-b, .scroll-dot { animation: none; }
   .hero-video { display: none; }
 }
+/* Prevent decorative elements from causing page-wide horizontal scrolling */
+html,
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
