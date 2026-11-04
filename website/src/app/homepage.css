@@ -1,0 +1,924 @@
+/* PadelVision homepage. Intentionally scoped to .pv, so other routes remain untouched. */
+.pv {
+  --pv-green: #103b30;
+  --pv-deep: #082f27;
+  --pv-cream: #f8f4ed;
+  --pv-sand: #e6dbca;
+  --pv-terracotta: #a45b40;
+  --pv-ink: #182e27;
+  color: var(--pv-ink);
+  background: var(--pv-cream);
+  font-family: Arial, "Helvetica Neue", sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+.pv * {
+  box-sizing: border-box;
+}
+.pv a {
+  text-decoration: none;
+  color: inherit;
+}
+.pv button {
+  font: inherit;
+}
+.pv h1,
+.pv h2,
+.pv h3,
+.pv p {
+  margin: 0;
+}
+.pv-container {
+  width: min(100% - 104px, 1370px);
+  margin: 0 auto;
+}
+.pv-header {
+  background: var(--pv-cream);
+  height: 91px;
+  position: relative;
+  z-index: 30;
+  border-bottom: 1px solid rgba(25, 47, 37, 0.06);
+}
+.pv-header-inner {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+}
+.pv-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  color: var(--pv-green) !important;
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 0.88;
+  letter-spacing: -1.3px;
+}
+.pv-logo small {
+  display: block;
+  margin-top: 9px;
+  font-size: 8px;
+  letter-spacing: 3px;
+  font-weight: 600;
+}
+.pv-mark {
+  position: relative;
+  display: block;
+  width: 43px;
+  height: 43px;
+  border: 3px solid currentColor;
+  border-radius: 50%;
+  transform: rotate(-30deg);
+  flex-shrink: 0;
+}
+.pv-mark span {
+  position: absolute;
+  top: 11px;
+  left: -5px;
+  width: 46px;
+  height: 5px;
+  border-radius: 8px;
+  background: var(--pv-cream);
+  border-top: 3px solid currentColor;
+  transform: rotate(-35deg);
+}
+.pv-mark span + span {
+  top: 22px;
+  transform: rotate(-35deg);
+}
+.pv-nav {
+  display: flex;
+  gap: 34px;
+  align-items: center;
+}
+.pv-nav a {
+  font-size: 13px;
+  font-weight: 600;
+  position: relative;
+  padding: 12px 0;
+}
+.pv-nav a::after {
+  content: "";
+  height: 1px;
+  position: absolute;
+  bottom: 6px;
+  left: 0;
+  right: 100%;
+  background: currentColor;
+  transition: right 0.2s;
+}
+.pv-nav a:hover::after,
+.pv-nav .pv-current::after {
+  right: 0;
+}
+.pv-btn {
+  border: 1px solid transparent;
+  padding: 15px 24px;
+  min-height: 49px;
+  border-radius: 999px;
+  display: inline-flex;
+  gap: 26px;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition:
+    background 0.2s,
+    transform 0.2s,
+    color 0.2s;
+}
+.pv-btn:hover {
+  transform: translateY(-2px);
+}
+.pv-btn-dark {
+  background: var(--pv-green);
+  color: #fff !important;
+}
+.pv-btn-dark:hover {
+  background: #225847;
+}
+.pv-btn-outline {
+  border-color: var(--pv-green);
+  color: var(--pv-green) !important;
+}
+.pv-btn-outline:hover {
+  background: #eae9de;
+}
+.pv-menu-toggle {
+  display: none;
+  border: 0;
+  background: transparent;
+  color: var(--pv-green);
+  font-size: 25px;
+  cursor: pointer;
+}
+.pv-hero {
+  position: relative;
+  min-height: 660px;
+  display: grid;
+  grid-template-columns: 44% 56%;
+  background: var(--pv-cream);
+  isolation: isolate;
+}
+.pv-hero-copy {
+  padding: 84px 0 40px max(52px, calc((100vw - 1370px) / 2));
+  position: relative;
+  z-index: 3;
+  max-width: 640px;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.pv-eyebrow {
+  color: var(--pv-terracotta);
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 3px;
+  line-height: 1.5;
+}
+.pv-hero h1 {
+  color: var(--pv-green);
+  font-size: clamp(48px, 5.1vw, 83px);
+  line-height: 1.02;
+  letter-spacing: -0.065em;
+  font-weight: 800;
+  white-space: nowrap;
+  margin: 24px 0 24px;
+}
+.pv-hero h1 span {
+  display: block;
+}
+.pv-hero-copy > p {
+  font-size: 15px;
+  line-height: 1.9;
+  max-width: 465px;
+  color: #34463e;
+}
+.pv-hero-actions {
+  margin-top: 31px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.pv-scroll {
+  margin-top: auto;
+  padding-top: 52px;
+  color: var(--pv-green) !important;
+  font-size: 10px;
+  letter-spacing: 2.3px;
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  font-weight: 700;
+}
+.pv-scroll > span:first-child {
+  display: block;
+  width: 1px;
+  height: 39px;
+  background: var(--pv-green);
+}
+.pv-scroll > span:last-child {
+  font-size: 19px;
+  letter-spacing: 0;
+}
+.pv-hero-photo {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 59.5%;
+  background-image:
+    linear-gradient(90deg, rgba(8, 47, 39, 0.03), rgba(8, 47, 39, 0.06)),
+    url("/images/padelvision-club.png");
+  background-size: cover;
+  background-position: center;
+  z-index: 1;
+}
+.pv-hero-edge {
+  pointer-events: none;
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  bottom: 0;
+  left: 37%;
+  width: 16%;
+  background: var(--pv-cream);
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+.pv-photo-label {
+  position: absolute;
+  bottom: 28px;
+  right: 28px;
+  padding: 16px 20px;
+  color: #fff;
+  background: rgba(9, 42, 34, 0.78);
+  backdrop-filter: blur(6px);
+}
+.pv-photo-label span {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 2.1px;
+}
+.pv-photo-label strong {
+  display: block;
+  margin-top: 7px;
+  font-size: 15px;
+}
+.pv-feature-strip {
+  background: #f0e9df;
+  border-top: 1px solid #e6dbcf;
+  border-bottom: 1px solid #e6dbcf;
+}
+.pv-features {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding-top: 26px;
+  padding-bottom: 26px;
+}
+.pv-feature {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 9px 24px;
+  border-right: 1px solid #d9cdbd;
+}
+.pv-feature:first-child {
+  padding-left: 0;
+}
+.pv-feature:last-child {
+  border: 0;
+}
+.pv-feature-icon {
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  color: var(--pv-green);
+}
+.pv-feature-icon svg {
+  width: 100%;
+  height: 100%;
+}
+.pv-feature h2 {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+.pv-feature p {
+  font-size: 11px;
+  color: #56645b;
+  margin-top: 6px;
+  line-height: 1.3;
+}
+.pv-story {
+  padding-top: 130px;
+  padding-bottom: 135px;
+  display: grid;
+  grid-template-columns: 52% 1fr;
+  gap: 9%;
+  align-items: center;
+}
+.pv-story-art {
+  position: relative;
+  height: 540px;
+}
+.pv-story-photo {
+  height: 100%;
+  width: 90%;
+  background: url("/images/padelvision-club.png") center/cover;
+  box-shadow: 27px -26px 0 #e4d9c6;
+}
+.pv-story-plaque {
+  position: absolute;
+  right: 0;
+  bottom: -24px;
+  background: var(--pv-green);
+  color: #fff;
+  padding: 30px 35px;
+  transform: rotate(-3deg);
+}
+.pv-story-plaque span {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: #cfdbcc;
+}
+.pv-story-plaque strong {
+  display: block;
+  font-size: 29px;
+  line-height: 1.14;
+  letter-spacing: -1.5px;
+  margin-top: 13px;
+}
+.pv-story-text h2,
+.pv-section-heading h2 {
+  font-weight: 800;
+  color: var(--pv-green);
+  font-size: clamp(42px, 4.3vw, 69px);
+  line-height: 1.09;
+  letter-spacing: -0.06em;
+  margin: 22px 0 25px;
+}
+.pv-story-text h2 em,
+.pv-section-heading h2 em,
+.pv-manifesto em,
+.pv-footer-signature em {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.065em;
+}
+.pv-story-text .pv-lead {
+  font-weight: 700;
+  color: var(--pv-green);
+  font-size: 22px;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.pv-story-text > p:not(.pv-lead) {
+  font-size: 15px;
+  line-height: 1.9;
+  color: #526058;
+  max-width: 450px;
+}
+.pv-link {
+  display: inline-flex;
+  gap: 36px;
+  align-items: center;
+  color: var(--pv-green) !important;
+  font-size: 13px;
+  font-weight: 700;
+  border-bottom: 1px solid var(--pv-green);
+  padding: 0 0 12px;
+  margin-top: 30px;
+}
+.pv-link:hover {
+  gap: 45px;
+}
+.pv-offer {
+  background: #ede5d9;
+  padding: 112px 0 122px;
+}
+.pv-section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 50px;
+  margin-bottom: 38px;
+}
+.pv-section-heading h2 {
+  margin-bottom: 0;
+}
+.pv-section-heading > p {
+  max-width: 345px;
+  color: #58675d;
+  font-size: 15px;
+  line-height: 1.8;
+  padding-bottom: 8px;
+}
+.pv-offer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+.pv-offer-card {
+  min-height: 425px;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 26px;
+  color: #fff !important;
+  transition: transform 0.25s;
+  position: relative;
+  overflow: hidden;
+  background: #1d4e40;
+}
+.pv-offer-card:hover {
+  transform: translateY(-6px);
+}
+.pv-offer-card::before {
+  position: absolute;
+  content: "";
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(7, 37, 31, 0.25),
+    rgba(7, 37, 31, 0.2) 30%,
+    rgba(6, 32, 25, 0.93)
+  );
+  z-index: 0;
+}
+.pv-offer-courts {
+  background: url("/images/padelvision-club.png") 68% center/cover;
+}
+.pv-offer-community {
+  background: linear-gradient(140deg, #8e9576, #1d4d40 70%);
+}
+.pv-offer-community::after {
+  content: "✳";
+  position: absolute;
+  right: -50px;
+  top: 45px;
+  color: rgba(246, 240, 220, 0.12);
+  font-size: 300px;
+  line-height: 1;
+}
+.pv-offer-events {
+  background: linear-gradient(155deg, #a77051, #664c3e 45%, #173d31);
+}
+.pv-offer-events::after {
+  content: "03";
+  font-size: 260px;
+  font-weight: 800;
+  line-height: 1;
+  position: absolute;
+  right: -20px;
+  top: 38px;
+  color: rgba(255, 255, 255, 0.1);
+}
+.pv-card-top,
+.pv-card-content {
+  position: relative;
+  z-index: 1;
+}
+.pv-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+.pv-card-top > span:last-child {
+  font-size: 28px;
+}
+.pv-card-content > svg {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 15px;
+}
+.pv-card-content h3 {
+  font-size: 36px;
+  letter-spacing: -1.6px;
+}
+.pv-card-content p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #edf0e7;
+  max-width: 280px;
+  margin: 9px 0 26px;
+}
+.pv-card-link {
+  font-size: 12px;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+  padding-bottom: 10px;
+}
+.pv-manifesto {
+  padding: 125px 0;
+  background: #f8f4ed;
+}
+.pv-manifesto-inner {
+  text-align: center;
+  position: relative;
+}
+.pv-manifesto p {
+  font-weight: 700;
+  font-size: clamp(34px, 5.2vw, 76px);
+  letter-spacing: -0.05em;
+  line-height: 1.17;
+  margin-top: 30px;
+  color: var(--pv-green);
+}
+.pv-manifesto em {
+  color: #9f644d;
+}
+.pv-asterisk {
+  position: absolute;
+  right: 6%;
+  bottom: -5px;
+  font-size: 90px;
+  color: #c7b89d;
+}
+.pv-last-call {
+  background: var(--pv-green);
+  color: #fff;
+  padding: 96px 0;
+  position: relative;
+  overflow: hidden;
+}
+.pv-last-call::after {
+  content: "✳";
+  position: absolute;
+  right: -60px;
+  top: -110px;
+  font-size: 450px;
+  color: rgba(255, 255, 255, 0.055);
+  line-height: 1;
+}
+.pv-last-call-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+  position: relative;
+  z-index: 1;
+}
+.pv-last-call .pv-eyebrow {
+  color: #e9b09b;
+}
+.pv-last-call h2 {
+  font-size: clamp(39px, 4.5vw, 68px);
+  line-height: 1.12;
+  letter-spacing: -0.06em;
+  margin: 15px 0;
+}
+.pv-last-call h2 span {
+  color: #e7a98d;
+}
+.pv-last-call p {
+  color: #d3e0d5;
+  font-size: 15px;
+}
+.pv-btn-cream {
+  background: var(--pv-cream);
+  color: var(--pv-green) !important;
+  padding: 18px 30px;
+}
+.pv-btn-cream:hover {
+  background: #e6dbca;
+}
+.pv-footer {
+  background: #082820;
+  color: #e9ede4;
+  padding: 76px 0 30px;
+}
+.pv-footer-main {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 50px;
+  padding-bottom: 84px;
+}
+.pv-logo-footer {
+  color: #f8f4ed !important;
+}
+.pv-logo-footer .pv-mark span {
+  background: #082820;
+}
+.pv-footer-main > div:first-child > p {
+  font-size: 13px;
+  line-height: 1.8;
+  color: #b6c8bb;
+  margin-top: 25px;
+}
+.pv-footer nav {
+  display: grid;
+  gap: 15px;
+  font-size: 13px;
+}
+.pv-footer nav a:hover {
+  color: #f1b59b;
+}
+.pv-footer-signature {
+  font-size: 54px;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  font-weight: 800;
+}
+.pv-footer-signature em {
+  color: #e4b198;
+}
+.pv-footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding-top: 26px;
+  border-top: 1px solid #37584a;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: #a7b9ad;
+}
+.pv-footer-bottom a {
+  color: #fff;
+}
+@media (max-width: 1150px) {
+  .pv-container {
+    width: calc(100% - 64px);
+  }
+  .pv-nav {
+    gap: 19px;
+  }
+  .pv-header-inner {
+    gap: 20px;
+  }
+  .pv-hero-copy {
+    padding-left: 32px;
+  }
+  .pv-hero h1 {
+    font-size: clamp(44px, 5vw, 67px);
+  }
+  .pv-hero-copy > p {
+    max-width: 385px;
+  }
+  .pv-feature {
+    padding: 8px 11px;
+    gap: 8px;
+  }
+  .pv-feature h2 {
+    font-size: 12px;
+  }
+  .pv-story {
+    gap: 6%;
+  }
+}
+@media (max-width: 800px) {
+  .pv-container {
+    width: calc(100% - 40px);
+  }
+  .pv-header {
+    height: 73px;
+  }
+  .pv-logo {
+    font-size: 18px;
+  }
+  .pv-logo small {
+    font-size: 7px;
+  }
+  .pv-mark {
+    width: 35px;
+    height: 35px;
+  }
+  .pv-mark span {
+    width: 37px;
+    top: 8px;
+  }
+  .pv-mark span + span {
+    top: 18px;
+  }
+  .pv-nav {
+    display: none;
+    position: absolute;
+    top: 73px;
+    left: 0;
+    right: 0;
+    background: var(--pv-cream);
+    padding: 18px 26px 24px;
+    box-shadow: 0 18px 26px #15342722;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .pv-nav-open {
+    display: flex;
+  }
+  .pv-nav-cta {
+    margin-left: auto;
+    padding: 12px 16px;
+    min-height: 41px;
+    font-size: 11px;
+    gap: 10px;
+  }
+  .pv-menu-toggle {
+    display: block;
+  }
+  .pv-hero {
+    display: flex;
+    flex-direction: column;
+    min-height: unset;
+  }
+  .pv-hero-copy {
+    padding: 58px 20px 45px;
+    max-width: none;
+  }
+  .pv-hero h1 {
+    font-size: clamp(42px, 8vw, 68px);
+    white-space: normal;
+    margin: 20px 0;
+  }
+  .pv-hero-copy > p {
+    max-width: 570px;
+  }
+  .pv-scroll {
+    margin-top: 10px;
+    padding-top: 25px;
+  }
+  .pv-scroll > span:first-child {
+    height: 22px;
+  }
+  .pv-hero-photo {
+    position: relative;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    width: 100%;
+    height: 410px;
+    background-position: center 50%;
+  }
+  .pv-hero-edge {
+    display: none;
+  }
+  .pv-feature-strip {
+    padding: 12px 0;
+  }
+  .pv-features {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px 0;
+  }
+  .pv-feature:nth-child(2) {
+    border-right: 0;
+  }
+  .pv-story {
+    grid-template-columns: 1fr;
+    padding-top: 90px;
+    padding-bottom: 90px;
+    gap: 65px;
+  }
+  .pv-story-art {
+    height: 460px;
+    max-width: 620px;
+  }
+  .pv-story-text {
+    max-width: 670px;
+  }
+  .pv-offer {
+    padding: 85px 0;
+  }
+  .pv-offer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .pv-offer-card:last-child {
+    grid-column: span 2;
+    min-height: 290px;
+  }
+  .pv-section-heading {
+    align-items: start;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .pv-section-heading > p {
+    max-width: 600px;
+  }
+  .pv-manifesto {
+    padding: 90px 0;
+  }
+  .pv-last-call-inner {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .pv-footer-main {
+    flex-wrap: wrap;
+  }
+  .pv-footer-signature {
+    font-size: 48px;
+  }
+}
+@media (max-width: 520px) {
+  .pv-nav-cta {
+    display: none;
+  }
+  .pv-menu-toggle {
+    margin-left: auto;
+  }
+  .pv-eyebrow {
+    letter-spacing: 2px;
+    font-size: 9px;
+  }
+  .pv-hero h1 {
+    font-size: clamp(38px, 11vw, 54px);
+  }
+  .pv-hero-copy > p {
+    font-size: 14px;
+  }
+  .pv-hero-actions {
+    align-items: stretch;
+    flex-direction: column;
+    width: 100%;
+    max-width: 300px;
+  }
+  .pv-hero-photo {
+    height: 320px;
+  }
+  .pv-photo-label {
+    right: 12px;
+    bottom: 12px;
+    padding: 12px;
+  }
+  .pv-features {
+    grid-template-columns: 1fr 1fr;
+  }
+  .pv-feature {
+    display: block;
+    padding: 10px 12px;
+    border-right: 0;
+  }
+  .pv-feature-icon {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 7px;
+  }
+  .pv-feature p {
+    font-size: 10px;
+  }
+  .pv-story-art {
+    height: 350px;
+  }
+  .pv-story-plaque {
+    padding: 22px;
+    right: 4px;
+    bottom: -26px;
+  }
+  .pv-story-plaque strong {
+    font-size: 22px;
+  }
+  .pv-story-text h2,
+  .pv-section-heading h2 {
+    font-size: 43px;
+  }
+  .pv-story-text .pv-lead {
+    font-size: 19px;
+  }
+  .pv-offer-grid {
+    grid-template-columns: 1fr;
+  }
+  .pv-offer-card {
+    min-height: 350px;
+  }
+  .pv-offer-card:last-child {
+    grid-column: auto;
+    min-height: 350px;
+  }
+  .pv-manifesto p {
+    font-size: 35px;
+  }
+  .pv-asterisk {
+    font-size: 45px;
+    right: 0;
+    bottom: -50px;
+  }
+  .pv-last-call {
+    padding: 75px 0;
+  }
+  .pv-footer-main {
+    gap: 40px;
+    padding-bottom: 60px;
+  }
+  .pv-footer-signature {
+    font-size: 43px;
+  }
+  .pv-footer-bottom {
+    flex-direction: column;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pv *,
+  .pv *::before,
+  .pv *::after {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
