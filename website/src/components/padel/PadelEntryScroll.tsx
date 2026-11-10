@@ -19,6 +19,8 @@ export default function PadelEntryScroll() {
       } catch {
         return;
       }
+      if (window.matchMedia("(max-width: 800px)").matches) return;
+
       const target = 88;
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
         window.scrollTo({ top: target, behavior: "instant" });

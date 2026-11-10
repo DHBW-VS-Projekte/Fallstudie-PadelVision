@@ -17,10 +17,11 @@ const links = [
 
 export default function HomeNavbar() {
   const pathname = usePathname();
+  const currentPath = pathname.replace(/\/+$/, "") || "/";
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="pv">
+    <div className="pv pv-navbar-shell">
       <header className="pv-header">
         <div className="pv-container pv-header-inner">
           <Link className="pv-logo" href="/" aria-label="PadelVision Startseite">
@@ -35,7 +36,7 @@ export default function HomeNavbar() {
             aria-label="Hauptnavigation"
           >
             {links.map((link) => {
-              const active = pathname === link.href;
+              const active = currentPath === link.href;
               const className = active ? "pv-current" : undefined;
               if (link.href === "/padel") {
                 return (

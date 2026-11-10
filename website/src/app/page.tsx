@@ -101,7 +101,7 @@ export default function Home() {
       <HomeNavbar />
 
       <section className="pv-hero" aria-labelledby="pv-title">
-        <div className="pv-hero-copy">
+        <div className="pv-hero-copy pv-animate" style={{ animationDelay: "0.05s" }}>
           <div className="pv-eyebrow">SPORT. COMMUNITY. LIFESTYLE.</div>
           <h1 id="pv-title">
             More People.
@@ -126,9 +126,10 @@ export default function Home() {
           </a>
         </div>
         <div
-          className="pv-hero-photo"
+          className="pv-hero-photo pv-animate"
           role="img"
           aria-label="Mediterraner Padel-Club mit Courts, Olivenbaum, Terrasse und Spielern"
+          style={{ animationDelay: "0.2s" }}
         >
           <div className="pv-photo-label">
             <span>THE PADELVISION WAY</span>
@@ -140,8 +141,12 @@ export default function Home() {
 
       <section className="pv-feature-strip" aria-label="PadelVision Highlights">
         <div className="pv-container pv-features">
-          {features.map((feature) => (
-            <div className="pv-feature" key={feature.title}>
+          {features.map((feature, index) => (
+            <div
+              className="pv-feature pv-animate"
+              key={feature.title}
+              style={{ animationDelay: `${index * 0.12}s` }}
+            >
               <div className="pv-feature-icon">{feature.icon}</div>
               <div>
                 <h2>{feature.title}</h2>
@@ -153,7 +158,7 @@ export default function Home() {
       </section>
 
       <section className="pv-story pv-container" id="what-makes-us">
-        <div className="pv-story-art">
+        <div className="pv-story-art pv-animate" style={{ animationDelay: "0.15s" }}>
           <div
             className="pv-story-photo"
             role="img"
@@ -168,7 +173,7 @@ export default function Home() {
             </strong>
           </div>
         </div>
-        <div className="pv-story-text">
+        <div className="pv-story-text pv-animate" style={{ animationDelay: "0.25s" }}>
           <span className="pv-eyebrow">THE CLUB / 01</span>
           <h2>
             Mehr als nur
@@ -191,7 +196,7 @@ export default function Home() {
 
       <section className="pv-offer" id="discover">
         <div className="pv-container">
-          <div className="pv-section-heading">
+          <div className="pv-section-heading pv-animate" style={{ animationDelay: "0.1s" }}>
             <div>
               <span className="pv-eyebrow">PLAY / CONNECT / BELONG</span>
               <h2>
@@ -206,7 +211,7 @@ export default function Home() {
             </p>
           </div>
           <div className="pv-offer-grid">
-            <a className="pv-offer-card pv-offer-courts" href={courtsPath}>
+            <a className="pv-offer-card pv-offer-courts pv-animate" href={courtsPath} style={{ animationDelay: "0.1s" }}>
               <div className="pv-card-top">
                 <span>01 / PLAY</span>
                 <Arrow />
@@ -219,8 +224,9 @@ export default function Home() {
               </div>
             </a>
             <a
-              className="pv-offer-card pv-offer-community"
+              className="pv-offer-card pv-offer-community pv-animate"
               href={communityPath}
+              style={{ animationDelay: "0.22s" }}
             >
               <div className="pv-card-top">
                 <span>02 / CONNECT</span>
@@ -233,7 +239,7 @@ export default function Home() {
                 <span className="pv-card-link">Community erleben ↗</span>
               </div>
             </a>
-            <a className="pv-offer-card pv-offer-events" href={eventsPath}>
+            <a className="pv-offer-card pv-offer-events pv-animate" href={eventsPath} style={{ animationDelay: "0.34s" }}>
               <div className="pv-card-top">
                 <span>03 / BELONG</span>
                 <Arrow />
@@ -249,7 +255,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="pv-manifesto" aria-label="Unser Motto">
+      <section className="pv-manifesto pv-animate" aria-label="Unser Motto" style={{ animationDelay: "0.1s" }}>
         <div className="pv-container pv-manifesto-inner">
           <span className="pv-eyebrow">THE PADELVISION FEELING</span>
           <p>
@@ -265,7 +271,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="pv-last-call">
+      <section className="pv-last-call pv-animate" style={{ animationDelay: "0.15s" }}>
         <div className="pv-container pv-last-call-inner">
           <div>
             <span className="pv-eyebrow">READY TO PLAY?</span>
