@@ -64,7 +64,19 @@ export default function HomeNavbar() {
             })}
           </nav>
           <Link className="pv-btn pv-btn-dark pv-nav-cta" href="/booking">
-            Court buchen <span aria-hidden="true">↗</span>
+            Court buchen
+            <svg
+              aria-hidden="true"
+              className="pv-arrow-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M7 17 17 7M7 7h10v10" />
+            </svg>
           </Link>
           <button
             className="pv-menu-toggle"

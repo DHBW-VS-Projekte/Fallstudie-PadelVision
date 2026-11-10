@@ -4,6 +4,7 @@
  * Interaktive Teile sind kleine Client-Inseln innerhalb der Abschnitte.
  */
 import type { Metadata } from "next";
+import Footer from "@/components/layout/Footer";
 import HomeNavbar from "@/components/layout/HomeNavbar";
 import PadelEntryScroll from "@/components/padel/PadelEntryScroll";
 import Hero from "@/components/padel/Hero";
@@ -48,6 +49,7 @@ export default function PadelPage() {
       <FaqSection />
       {/* ===== Abschluss ===== */}
       <FinalCta />
+      <Footer />
     </>
   );
 }

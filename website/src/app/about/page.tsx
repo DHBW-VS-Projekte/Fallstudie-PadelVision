@@ -70,7 +70,18 @@ export default function AboutPage() {
                 Ein gemeinsamer Platz für das, was uns verbindet.
               </p>
               <a className={styles.scrollLink} href="#roots">
-                DISCOVER OUR STORY <span aria-hidden="true">↓</span>
+                DISCOVER OUR STORY
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M12 4v16m-7-7 7 7 7-7" />
+                </svg>
               </a>
             </div>
           </div>
@@ -142,11 +153,15 @@ export default function AboutPage() {
           </div>
         </Reveal>
 
-        <section className={styles.philosophy} aria-labelledby="philosophy-title">
+        <section
+          id="philosophy-title"
+          className={styles.philosophy}
+          aria-labelledby="philosophy-heading"
+        >
           <div className={styles.philosophyInner}>
             <Reveal as="div" direction="up" className={styles.philosophyIntro}>
               <p className={styles.kicker}>02 — OUR PHILOSOPHY</p>
-              <h2 id="philosophy-title">
+              <h2 id="philosophy-heading">
                 Three ideas.
                 <br />
                 <em>One feeling.</em>

@@ -1,56 +1,71 @@
-/**
- * Footer.tsx – Kontakt/Impressum-Bereich
- * Server Component: rein statisch, kein JavaScript im Browser nötig.
- * Alle Kontaktdaten sind bewusst erkennbare PLATZHALTER (.example-Domain).
- */
 import Link from "next/link";
-import LogoMark from "@/components/layout/LogoMark";
+import { ArrowUpRight } from "lucide-react";
+import styles from "./Footer.module.css";
+
+const navigation = [
+  { href: "/", label: "Home" },
+  { href: "/courts", label: "Courts" },
+  { href: "/padel", label: "Padel entdecken" },
+  { href: "/about", label: "About" },
+];
 
 export default function Footer() {
-
-  // Hinweis zum Jahr: Die Seite wird statisch beim Build erzeugt. Das Jahr
-  // "friert" also auf das Build-Jahr ein. Für ein Uni-Projekt ist das okay,
-  // weil bei jedem neuen Build/Deployment aktualisiert wird. Alternative:
-  // das Jahr in einer kleinen Client-Komponente berechnen.
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-line bg-surface">
-      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 sm:px-8 md:grid-cols-3">
-        <div>
-          <div className="flex items-center gap-3">
-            <LogoMark />
-            <p className="text-xl font-semibold tracking-tight">
-              Padel<span className="text-accent">Vision</span>
-            </p>
-          </div>
-          <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted">
-            2 Indoor-Courts, 1 Outdoor-Court, Kurse und Turniere.
+    <footer className={styles.footer}>
+      <div className={styles.inner}>
+        <div className={styles.signature}>
+          <Link className={styles.wordmark} href="/" aria-label="PadelVision Startseite">
+            PADEL<span>VISION</span>
+          </Link>
+          <p className={styles.signOff}>
+            See you
+            <br />
+            <em>on court.</em>
           </p>
         </div>
 
-        {/* <address> kennzeichnet semantisch Kontaktdaten */}
-        <address className="text-sm not-italic leading-relaxed text-muted">
-          <p className="mb-2 font-semibold text-foreground">Kontakt</p>
-          Musterstraße 1<br />
-          12345 Musterstadt
-          <br />
-          <a href="tel:+490000000000" className="inline-block py-1 hover:text-accent">+49 000 0000000</a>
-          <br />
-          <a href="mailto:hallo@padelvision.example" className="inline-block py-1 hover:text-accent">
-            hallo@padelvision.example
-          </a>
-        </address>
+        <div className={styles.footerDetails}>
+          <nav className={styles.navigation} aria-label="Footer Navigation">
+            <span className={styles.label}>EXPLORE</span>
+            {navigation.map((item) => (
+              <Link key={item.href} href={item.href}>
+                {item.label}
+              </Link>
+            ))}
+            <Link className={styles.bookingLink} href="/courts">
+              Find your court <ArrowUpRight aria-hidden="true" />
+            </Link>
+          </nav>
 
-        <div className="text-sm">
-          <p className="mb-2 font-semibold">Rechtliches</p>
-          <ul className="text-muted">
-            <li><Link href="/impressum" className="inline-block py-1.5 hover:text-accent">Impressum</Link></li>
-            <li><Link href="/datenschutz" className="inline-block py-1.5 hover:text-accent">Datenschutz</Link></li>
-          </ul>
+          <div className={styles.legal}>
+            <span className={styles.label}>RECHTLICHES</span>
+            <p>
+              PADELVISION ist eine Fallstudie und Konzeptdarstellung. Rechtliche
+              Angaben werden im finalen Markenauftritt ergänzt.
+            </p>
+          </div>
+        </div>
+
+        <div className={styles.bottom}>
+          <span>© {year} PADELVISION · FALLSTUDIE / KONZEPT</span>
+          <a href="#top">
+            BACK TO TOP
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M12 19V5m-7 7 7-7 7 7" />
+            </svg>
+          </a>
         </div>
       </div>
-      <p className="border-t border-line py-6 text-center text-xs text-muted">© {year} PadelVision</p>
     </footer>
   );
 }

@@ -121,12 +121,13 @@
   white-space: nowrap;
 }
 
-.scrollLink span {
-  font-size: 17px;
+.scrollLink svg {
+  width: 16px;
+  height: 16px;
   transition: transform 220ms ease;
 }
 
-.scrollLink:hover span {
+.scrollLink:hover svg {
   transform: translateY(4px);
 }
 
@@ -383,6 +384,7 @@
 .philosophy {
   position: relative;
   overflow: hidden;
+  scroll-margin-top: 24px;
   padding: clamp(82px, 10vw, 145px) clamp(24px, 7vw, 104px);
   color: #fff;
   background: var(--about-deep);
@@ -921,6 +923,10 @@
 }
 
 @media (max-width: 640px) {
+  .philosophy {
+    scroll-margin-top: 88px;
+  }
+
   .hero {
     min-height: min(760px, calc(100svh - 73px));
     padding: 40px 22px 30px;
