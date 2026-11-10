@@ -51,7 +51,7 @@ export default function RulesTabs({ categories }: { categories: RuleCategory[] }
               onClick={() => setIndex(i)}
               onKeyDown={onKeyDown}
               className={`inline-flex min-h-11 items-center gap-2 rounded-full px-6 font-medium transition-colors ${
-                selected ? (cat.kind === "ok" ? "bg-accent-2 text-background" : "bg-accent text-on-accent") : "text-muted hover:text-foreground"
+                selected ? "bg-brand-green text-white" : "text-muted hover:text-foreground"
               }`}
             >
               <Icon aria-hidden="true" className="size-4" /> {cat.label}
