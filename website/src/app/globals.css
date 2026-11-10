@@ -1,31 +1,26 @@
 /*@import "tailwindcss";
-
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
-
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
 }
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
 Das ist der "Alte Part"*/
-
 /* =====================================================================
    globals.css – GEÄNDERT
    Zweck: Zentrale Design-Tokens (Farben, Schatten, Animationen), Dark Mode,
@@ -33,17 +28,18 @@ Das ist der "Alte Part"*/
    Wird in src/app/layout.tsx importiert und gilt damit für ALLE Seiten.
    Hinweis: In Tailwind v4 gibt es keine tailwind.config.js mehr –
    alles Konfigurierbare steht hier in CSS.
+
+   Änderungen für /courts sind mit "NEU (Courts)" markiert:
+   Karten-Tokens, @theme-Einträge, Karten-/Pin-/Tooltip-CSS,
+   Event-Filter, Detail-Crossfade und Reduced-Motion-Ergänzungen.
    ===================================================================== */
-
 @import "tailwindcss";
-
 /* Klassenbasierter Dark Mode:
    Standardmäßig reagiert `dark:` in Tailwind v4 auf die Systemeinstellung.
    Wir wollen aber einen manuellen Schalter. Diese Zeile sagt Tailwind:
    "dark:"-Klassen gelten, sobald ein Vorfahre (meist <html>) die Klasse .dark hat.
    :where() hält die Spezifität bei 0, damit nichts unerwartet überschrieben wird. */
 @custom-variant dark (&:where(.dark, .dark *));
-
 /* ---------- Farbpalette HELL (mediterran, warm) ---------- */
 :root {
   --background: #faf7f2;   /* warmes Off-White / Sand */
@@ -52,6 +48,7 @@ Das ist der "Alte Part"*/
   --foreground: #2a2622;   /* warmes Anthrazit, kein reines Schwarz (≈ 14:1 auf background) */
   --muted: #645b53;        /* gedämpfter Text (≈ 6:1 auf background) */
   --accent: #b14a2a;       /* Terrakotta – weißer Text darauf ≈ 5.3:1 (AA) */
+  --brand-green: #103b30;
   --on-accent: #fffdf8;    /* Text auf Akzent-Buttons */
   --accent-2: #1f5f66;     /* Petrol/Meerblau (≈ 7:1 auf background) */
   --olive: #5f6d33;        /* Olivgrün, sparsam eingesetzt */
@@ -63,8 +60,13 @@ Das ist der "Alte Part"*/
   --hero-ink: #fffdf8;     /* Text über Hero-/CTA-Bildern (immer hell) */
   --hero-shade: #14110e;   /* Abdunkelung für Lesbarkeits-Verläufe */
   --shadow-color: 42 30 20; /* RGB-Werte für warme Schatten */
+  /* NEU (Courts): Farben der Europakarte */
+  --land: #f8f2e8;         /* Landoberfläche, heller Sand */
+  --land-strong: #ecd0b8;  /* Länder mit Standort: leicht terrakotta getönt */
+  --land-side: #c8b597;    /* "Seitenwand" der extrudierten Landplatten */
+  --sea: #d3e7e4;          /* Meer, hell */
+  --sea-deep: #a7cdca;     /* Meer, tiefer (Verlauf) */
 }
-
 /* ---------- Farbpalette DUNKEL ---------- */
 .dark {
   --background: #141a1f;   /* tiefes, warmes Dunkelblau-Anthrazit, kein #000 */
@@ -82,8 +84,13 @@ Das ist der "Alte Part"*/
   --court: #24564f;
   --court-line: #e9e4dc;
   --shadow-color: 0 0 0;
+  /* NEU (Courts): Karte im Dunkelmodus – Land dunkel-warm, Meer tiefes Petrol */
+  --land: #2b3640;
+  --land-strong: #4a3a33;
+  --land-side: #11171c;
+  --sea: #173540;
+  --sea-deep: #0e222b;
 }
-
 /* @theme inline: macht die CSS-Variablen als Tailwind-Klassen verfügbar
    (bg-background, text-muted, fill-accent, border-line …).
    "inline" bedeutet: Tailwind setzt var(--…) direkt ein, statt den Wert
@@ -95,6 +102,7 @@ Das ist der "Alte Part"*/
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-accent: var(--accent);
+  --color-brand-green: var(--brand-green);
   --color-on-accent: var(--on-accent);
   --color-accent-2: var(--accent-2);
   --color-olive: var(--olive);
@@ -105,13 +113,18 @@ Das ist der "Alte Part"*/
   --color-court-line: var(--court-line);
   --color-hero-ink: var(--hero-ink);
   --color-hero-shade: var(--hero-shade);
+  /* NEU (Courts): fill-land, fill-land-strong, fill-land-side, bg-sea … */
+  --color-land: var(--land);
+  --color-land-strong: var(--land-strong);
+  --color-land-side: var(--land-side);
+  --color-sea: var(--sea);
+  --color-sea-deep: var(--sea-deep);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --shadow-soft: 0 10px 30px -12px rgb(var(--shadow-color) / 0.18);
   --shadow-lift: 0 22px 45px -18px rgb(var(--shadow-color) / 0.32);
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
-
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .interactive-card {
     transition:
@@ -119,59 +132,49 @@ Das ist der "Alte Part"*/
       box-shadow 800ms var(--ease-out-soft),
       border-color 500ms var(--ease-out-soft);
   }
-
   .interactive-card:hover {
     translate: 0 -4px;
     border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
     box-shadow: var(--shadow-lift);
   }
 }
-
 /* ---------- Grundlayout ---------- */
 html {
   background: var(--background);
   color: var(--foreground);
 }
-
 /* Weiches Scrollen bei Ankerlinks – nur wenn der Nutzer keine reduzierte Bewegung wünscht */
 @media (prefers-reduced-motion: no-preference) {
   html { scroll-behavior: smooth; }
 }
-
 body {
   background: var(--background);
   color: var(--foreground);
   /* Kein font-family mehr hier: die Geist-Schrift kommt über font-sans (Tailwind) */
 }
-
 /* scroll-margin-top: Beim Springen zu #anker hält der Browser diesen Abstand
    zum oberen Rand ein – so verschwinden Überschriften nicht unter der fixen
    Navbar (≈ 4rem) und der klebenden Kapitelnavigation (≈ 3.5rem). */
 section[id] { scroll-margin-top: 8.5rem; }
-
 html:has([data-padel-nav-visible="true"]) .chapter-nav {
   top: 4rem;
 }
-
 @media (hover: none) {
   [data-padel-navbar][data-padel-nav-visible="false"] {
     transform: translateY(0);
     opacity: 1;
     pointer-events: auto;
   }
-
   .chapter-nav {
     top: 4rem;
   }
 }
-
 /* Einheitlicher, gut sichtbarer Tastatur-Fokus (nur bei Tastaturbedienung) */
 :focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 3px;
   border-radius: 0.5rem;
 }
-
 /* Sanfter Farbübergang NUR während eines Theme-Wechsels.
    Die Klasse wird von ThemeToggle kurz gesetzt und wieder entfernt –
    beim ersten Laden animiert dadurch nichts. */
@@ -181,20 +184,17 @@ html.theme-transition *::before,
 html.theme-transition *::after {
   transition: background-color 300ms ease, color 300ms ease, border-color 300ms ease, fill 300ms ease !important;
 }
-
 /* Horizontal scrollbare Leisten ohne sichtbare Scrollbar */
 @utility no-scrollbar {
   scrollbar-width: none;
   &::-webkit-scrollbar { display: none; }
 }
-
 /* ---------- Fallback-Verläufe für Bilder (bis echte Fotos da sind) ---------- */
 .fallback-terra { background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
 .fallback-sea   { background: linear-gradient(160deg, var(--accent-2), var(--glass)); }
 .fallback-olive { background: linear-gradient(135deg, var(--surface), var(--olive)); }
 .fallback-sun   { background: linear-gradient(200deg, var(--accent), var(--olive)); }
 .fallback-dusk  { background: linear-gradient(120deg, var(--hero-shade), var(--accent-2) 60%, var(--accent)); }
-
 /* =====================================================================
    SCROLL-REVEAL
   No-JS-Sicherheit: Der versteckte Startzustand gilt erst, nachdem ein
@@ -216,7 +216,6 @@ html.theme-transition *::after {
 .reveal-ready [data-reveal="up"]:not([data-visible])    { transform: translateY(28px); }
 .reveal-ready [data-reveal="left"]:not([data-visible])  { transform: translateX(-36px); }
 .reveal-ready [data-reveal="right"]:not([data-visible]) { transform: translateX(36px); }
-
 /* ---------- Bild-Reveal ----------
    clip-path: inset(oben rechts unten links) schneidet den SICHTBAREN Bereich
    zu, ohne das Layout zu verändern. Wir starten mit "unten 100 % abgeschnitten"
@@ -235,7 +234,6 @@ html.theme-transition *::after {
 .reveal-ready [data-image-reveal]:not([data-visible]) .reveal-zoom {
   transform: scale(1.1);
 }
-
 /* ---------- Linie "zeichnen" (SVG) ----------
    pathLength="1" normiert die Pfadlänge auf 1. Mit stroke-dasharray: 1 ist
    der Pfad ein einziger Strich; stroke-dashoffset: 1 schiebt ihn komplett
@@ -254,7 +252,6 @@ html.theme-transition *::after {
   from { stroke-dashoffset: 1; }
   to   { stroke-dashoffset: 0; }
 }
-
 /* Elemente, die nach dem Zeichnen auftauchen (z. B. Aufprallpunkt, Stationen) */
 .reveal-ready [data-reveal]:not([data-visible]) .pop-in { opacity: 0; }
 .reveal-ready [data-reveal][data-visible] .pop-in {
@@ -266,7 +263,6 @@ html.theme-transition *::after {
   to   { opacity: 1; transform: scale(1); }
 }
 .pop-in { transform-box: fill-box; transform-origin: center; }
-
 /* ---------- Hero ---------- */
 /* Ken-Burns: sehr langsamer Zoom, hin und zurück (alternate) */
 @keyframes ken-burns {
@@ -274,7 +270,6 @@ html.theme-transition *::after {
   to   { transform: scale(1.12) translate3d(-1.5%, -1%, 0); }
 }
 .ken-burns { animation: ken-burns 26s ease-in-out infinite alternate; }
-
 /* Wort-für-Wort-Headline: reine CSS-Animation, funktioniert ohne JS.
    Jedes Wort bekommt per style eine eigene animation-delay. */
 @keyframes word-in {
@@ -286,7 +281,6 @@ html.theme-transition *::after {
   animation: word-in 900ms var(--ease-out-soft) both;
 }
 .fade-up { animation: word-in 900ms var(--ease-out-soft) both; }
-
 /* Scroll-Hinweis (kleiner Punkt in der "Maus") */
 @keyframes scroll-dot {
   0% { opacity: 0; transform: translateY(0); }
@@ -294,7 +288,6 @@ html.theme-transition *::after {
   100% { opacity: 0; transform: translateY(12px); }
 }
 .scroll-dot { animation: scroll-dot 1.8s ease-in-out infinite; }
-
 /* ---------- Schwebende Deko-Formen ---------- */
 @keyframes float-a {
   0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
@@ -306,7 +299,6 @@ html.theme-transition *::after {
 }
 .float-a { animation: float-a 14s ease-in-out infinite; }
 .float-b { animation: float-b 18s ease-in-out infinite; }
-
 /* ---------- FAQ (native <details>) ----------
    ::details-content ist der Inhaltsbereich von <details>. Mit
    interpolate-size können moderne Browser von height:0 auf auto animieren.
@@ -319,6 +311,123 @@ details.faq::details-content {
 }
 details.faq[open]::details-content { block-size: auto; }
 details.faq summary::-webkit-details-marker { display: none; }
+
+/* =====================================================================
+   NEU (Courts): 3D-EUROPAKARTE
+   ===================================================================== */
+
+/* Bühne: perspective legt den Abstand des "Betrachters" fest. Erst dadurch
+   wirkt rotateX räumlich (Kante hinten kleiner als vorne). Mobil kippen wir
+   weniger stark (18°), damit die kleine Karte gut lesbar bleibt. */
+.map-stage {
+  --map-tilt: 18deg;
+  perspective: 1400px;
+  perspective-origin: 50% 25%;
+}
+@media (min-width: 768px) {
+  .map-stage { --map-tilt: 28deg; }
+}
+
+/* Kartenebene: gekippt wie ein Modell auf dem Tisch.
+   --tilt-x / --tilt-y setzt die Maus-Parallaxe per JavaScript (±4°).
+   --unfold ist die zusätzliche Neigung vor dem "Aufklappen".
+   preserve-3d: Kinder (Pins) bleiben im 3D-Raum, statt flachgedrückt zu werden.
+   Wichtig: KEIN overflow-hidden / opacity < 1 / filter an diesem Element –
+   das würde preserve-3d wieder aufheben. */
+.map-plane {
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  --unfold: 0deg;
+  transform-style: preserve-3d;
+  transform-origin: 50% 60%;
+  transform: rotateX(calc(var(--map-tilt) + var(--tilt-x) + var(--unfold))) rotateY(var(--tilt-y)) rotateZ(-2deg);
+  /* Diese Transition lässt die Karte nach der Parallaxe weich zurückfedern */
+  transition: transform 900ms var(--ease-out-soft);
+}
+.map-pins { transform-style: preserve-3d; }
+
+/* Einblendung: vor dem Sichtbarwerden flacher gekippt (zusätzliche 24°),
+   danach klappt die Karte in die Endposition. Nur mit JS (.reveal-ready). */
+.reveal-ready [data-map]:not([data-visible]) .map-plane { --unfold: 24deg; }
+
+/* Pin: Fuß sitzt genau auf dem Ort (translate -50 % / -100 %), dann wird er
+   um den Fußpunkt (transform-origin unten Mitte) mit -tilt gegengedreht →
+   er steht aufrecht. Funktionen in transform wirken von rechts nach links. */
+.map-pin {
+  transform: translate(-50%, -100%) rotateX(calc(var(--map-tilt) * -1));
+  transform-origin: 50% 100%;
+  transform-style: preserve-3d;
+}
+.map-pin .map-pin-marker { transform-origin: 50% 100%; }
+@media (hover: hover) {
+  .map-pin:hover .map-pin-marker { transform: translateY(-6px); }
+}
+.map-pin:focus-visible .map-pin-marker { transform: translateY(-6px); }
+.map-pin:focus-visible { outline-offset: 6px; }
+
+/* Pins fallen gestaffelt von oben ein (--pin-delay je Pin) */
+.reveal-ready [data-map]:not([data-visible]) .map-pin-drop { opacity: 0; transform: translateY(-48px); }
+.reveal-ready [data-map][data-visible] .map-pin-drop {
+  animation: pin-drop 750ms var(--ease-out-soft) both;
+  animation-delay: calc(450ms + var(--pin-delay, 0ms));
+}
+@keyframes pin-drop {
+  0%   { opacity: 0; transform: translateY(-48px); }
+  70%  { opacity: 1; transform: translateY(4px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Puls-Ring am Boden (liegt flach auf der Karte) */
+.map-pulse {
+  transform: translate(-50%, -50%);
+  animation: map-pulse 2.6s ease-out infinite;
+}
+@keyframes map-pulse {
+  0%   { transform: translate(-50%, -50%) scale(0.6); opacity: 0.9; }
+  100% { transform: translate(-50%, -50%) scale(1.9); opacity: 0; }
+}
+
+/* Verbindungsbögen zeichnen sich nach dem Aufklappen (Maskenpfad, pathLength=1) */
+.map-arc-mask { stroke-dasharray: 1; stroke-dashoffset: 0; }
+.reveal-ready [data-map]:not([data-visible]) .map-arc-mask { stroke-dashoffset: 1; }
+.reveal-ready [data-map][data-visible] .map-arc-mask {
+  animation: draw-line 1.6s var(--ease-out-soft) both;
+  animation-delay: var(--draw-delay, 700ms);
+}
+
+/* Tooltip: Sichtbarkeit rein per CSS. Hover nur auf Geräten mit Maus;
+   Tastaturfokus immer. data-tip-hidden (nach Escape) blendet ihn aus.
+   Auf Touch-Geräten entfällt er komplett – dort übernimmt das Detail-Panel. */
+.map-tip {
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+  transition: opacity 200ms var(--ease-out-soft), transform 200ms var(--ease-out-soft);
+}
+@media (hover: hover) {
+  .map-pin:hover .map-tip { opacity: 1; transform: none; }
+}
+.map-pin:focus-visible .map-tip { opacity: 1; transform: none; }
+.map-pin[data-tip-hidden] .map-tip { opacity: 0; transform: translateY(6px); }
+@media (hover: none) {
+  .map-tip { display: none; }
+}
+
+/* Detail-Panel: Crossfade + leichtes Hochgleiten. Die Animation startet
+   automatisch neu, wenn ein Panel von hidden auf sichtbar wechselt. */
+.detail-in { animation: detail-in 650ms var(--ease-out-soft) both; }
+@keyframes detail-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Event-Filter: der Client setzt nur data-filter, CSS blendet den Rest aus */
+.event-filter[data-filter="turnier"] [data-type]:not([data-type="turnier"]),
+.event-filter[data-filter="kurs"] [data-type]:not([data-type="kurs"]),
+.event-filter[data-filter="community"] [data-type]:not([data-type="community"]),
+.event-filter[data-filter="camp"] [data-type]:not([data-type="camp"]) {
+  display: none;
+}
 
 /* =====================================================================
    REDUZIERTE BEWEGUNG
@@ -344,6 +453,16 @@ details.faq summary::-webkit-details-marker { display: none; }
   .reveal-ready [data-reveal] .pop-in { opacity: 1; animation: none; }
   .ken-burns, .float-a, .float-b, .scroll-dot { animation: none; }
   .hero-video { display: none; }
+  /* NEU (Courts): Karte sofort im Endzustand – kein Aufklappen, kein Puls,
+     keine Parallaxe, Pins und Bögen direkt sichtbar */
+  .map-plane,
+  .reveal-ready [data-map]:not([data-visible]) .map-plane { --unfold: 0deg; --tilt-x: 0deg; --tilt-y: 0deg; }
+  .reveal-ready [data-map]:not([data-visible]) .map-pin-drop,
+  .reveal-ready [data-map][data-visible] .map-pin-drop { opacity: 1; transform: none; animation: none; }
+  .reveal-ready [data-map]:not([data-visible]) .map-arc-mask,
+  .reveal-ready [data-map][data-visible] .map-arc-mask { stroke-dashoffset: 0; animation: none; }
+  .map-pulse { animation: none; opacity: 0.5; }
+  .detail-in { animation: none; }
 }
 /* Prevent decorative elements from causing page-wide horizontal scrolling */
 html,

@@ -118,8 +118,8 @@ export default function Hero() {
             href="#was-ist-padel"
             className="
               group inline-flex min-h-12 items-center gap-3
-              rounded-full bg-accent px-6
-              font-semibold text-on-accent shadow-lift
+              rounded-full bg-brand-green px-6
+              font-semibold text-white shadow-lift
               transition-transform hover:-translate-y-0.5
               active:translate-y-0 sm:px-7
             "

@@ -63,7 +63,7 @@ export default function ScoreCounter() {
             <label
               key={m.id}
               className={`flex min-h-11 cursor-pointer items-center justify-center rounded-full px-2 text-center text-sm font-medium transition-colors has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-accent ${
-                state.mode === m.id ? "bg-accent text-on-accent shadow-soft" : "text-muted hover:text-foreground"
+                state.mode === m.id ? "bg-brand-green text-white shadow-soft" : "text-muted hover:text-foreground"
               }`}
             >
               <input

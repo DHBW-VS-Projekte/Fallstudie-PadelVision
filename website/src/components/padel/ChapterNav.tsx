@@ -59,7 +59,7 @@ export default function ChapterNav({ chapters }: { chapters: Chapter[] }) {
                 href={`#${chapter.id}`}
                 aria-current={isActive ? "true" : undefined}
                 className={`inline-flex min-h-11 items-center whitespace-nowrap rounded-full px-4 text-sm font-medium transition-colors ${
-                  isActive ? "bg-accent text-on-accent" : "text-muted hover:text-foreground"
+                  isActive ? "bg-brand-green text-white" : "text-muted hover:text-foreground"
                 }`}
               >
                 {chapter.label}

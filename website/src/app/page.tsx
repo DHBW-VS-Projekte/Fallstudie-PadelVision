@@ -1,23 +1,14 @@
-"use client";
-
-import { useState } from "react";
-import "./homepage.css";
+import Link from "next/link";
+import HomeNavbar from "@/components/layout/HomeNavbar";
+import LogoMark from "@/components/layout/LogoMark";
+import PadelEntryLink from "@/components/layout/PadelEntryLink";
 
 const bookingPath = "/booking";
 const clubPath = "/about";
 const courtsPath = "/courts";
 const eventsPath = "/events";
 const communityPath = "/community";
-const padelPath = "/padel";
 
-function Mark() {
-  return (
-    <span className="pv-mark" aria-hidden="true">
-      <span />
-      <span />
-    </span>
-  );
-}
 function Arrow() {
   return <span aria-hidden="true">↗</span>;
 }
@@ -105,58 +96,9 @@ const features = [
 ];
 
 export default function Home() {
-  const [menuOpen, setMenuOpen] = useState(false);
   return (
     <main className="pv" id="top">
-      <header className="pv-header">
-        <div className="pv-container pv-header-inner">
-          <a className="pv-logo" href="/" aria-label="PadelVision Startseite">
-            <Mark />
-            <span>
-              PADELVISION<small>SPORT. COMMUNITY. PADEL.</small>
-            </span>
-          </a>
-          <nav
-            className={"pv-nav " + (menuOpen ? "pv-nav-open" : "")}
-            aria-label="Hauptnavigation"
-          >
-            <a
-              className="pv-current"
-              href="/"
-              onClick={() => setMenuOpen(false)}
-            >
-              Home
-            </a>
-            <a href={courtsPath} onClick={() => setMenuOpen(false)}>
-              Courts
-            </a>
-            <a href={padelPath} onClick={() => setMenuOpen(false)}>
-              Padel entdecken
-            </a>
-            <a href={communityPath} onClick={() => setMenuOpen(false)}>
-              Community
-            </a>
-            <a href={eventsPath} onClick={() => setMenuOpen(false)}>
-              Events
-            </a>
-            <a href={clubPath} onClick={() => setMenuOpen(false)}>
-              About
-            </a>
-          </nav>
-          <a className="pv-btn pv-btn-dark pv-nav-cta" href={bookingPath}>
-            Court buchen <Arrow />
-          </a>
-          <button
-            className="pv-menu-toggle"
-            type="button"
-            aria-label={menuOpen ? "Menü schließen" : "Menü öffnen"}
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            {menuOpen ? "✕" : "☰"}
-          </button>
-        </div>
-      </header>
+      <HomeNavbar />
 
       <section className="pv-hero" aria-labelledby="pv-title">
         <div className="pv-hero-copy">
@@ -344,12 +286,12 @@ export default function Home() {
         <div className="pv-container">
           <div className="pv-footer-main">
             <div>
-              <a className="pv-logo pv-logo-footer" href="/">
-                <Mark />
+              <Link className="pv-logo pv-logo-footer" href="/">
+                <LogoMark variant="light" />
                 <span>
                   PADELVISION<small>PADEL & COMMUNITY</small>
                 </span>
-              </a>
+              </Link>
               <p>
                 More People. Better Games.
                 <br />
@@ -358,7 +300,7 @@ export default function Home() {
             </div>
             <nav aria-label="Footer Navigation">
               <a href={courtsPath}>Courts</a>
-              <a href={padelPath}>Padel entdecken</a>
+              <PadelEntryLink>Padel entdecken</PadelEntryLink>
               <a href={communityPath}>Community</a>
               <a href={eventsPath}>Events</a>
               <a href={clubPath}>About</a>

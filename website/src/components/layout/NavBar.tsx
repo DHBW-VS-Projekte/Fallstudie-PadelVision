@@ -1,9 +1,14 @@
-  "use client";
+"use client";
 /**
  * Navbar.tsx – Hauptnavigation (fixed) mit Theme-Switch und Burger-Menü
- * Verwendung: im Root-Layout, also auf allen Seiten.
+ * Verwendung: auf allen Seiten.
  * Client Component: braucht den aktuellen Pfad (usePathname), die
  * Scrollposition und den Öffnen/Schließen-Zustand des Mobilmenüs.
+ *
+ * GEÄNDERT für /courts (nur zwei Stellen):
+ *  1. NAV_LINKS: neuer Eintrag "Courts" → /courts
+ *  2. PAGES_WITH_HERO: "/courts" ergänzt, damit die Navbar über dem dunklen
+ *     Courts-Hero transparent mit heller Schrift startet.
  */
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -14,12 +19,13 @@ import ThemeToggle from "@/components/layout/ThemeToggle";
 const NAV_LINKS = [
   { href: "/", label: "Start" },
   { href: "/padel", label: "Padel erklärt" },
+  { href: "/courts", label: "Courts" },
   { href: "/buchung", label: "Buchung" },
   { href: "/turniere-kurse", label: "Turniere & Kurse" },
 ] as const;
 
 /** Seiten mit dunklem Vollbild-Hero: Dort ist die Navbar oben transparent */
-const PAGES_WITH_HERO = ["/padel"];
+const PAGES_WITH_HERO = ["/padel", "/courts"];
 
 function subscribeScroll(callback: () => void) {
   window.addEventListener("scroll", callback, { passive: true });
@@ -35,25 +41,21 @@ export default function Navbar() {
   // useSyncExternalStore: "Wurde gescrollt?" – ohne Effekt + setState.
   // Server-Snapshot false = transparenter Startzustand, kein Hydration-Mismatch.
   const scrolled = useSyncExternalStore(subscribeScroll, () => window.scrollY > 24, () => false);
-
   const [padelNavVisible, setPadelNavVisible] = useState(false);
 
   useEffect(() => {
     if (!isPadelPage) return;
-
     const isInside = (element: Element | null, x: number, y: number) => {
       if (!element) return false;
       const { left, right, top, bottom } = element.getBoundingClientRect();
       return x >= left && x <= right && y >= top && y <= bottom;
     };
-
     const onPointerMove = (event: PointerEvent) => {
       const insideNav =
         isInside(document.querySelector("[data-padel-navbar]"), event.clientX, event.clientY) ||
         isInside(document.querySelector("[data-chapter-nav]"), event.clientX, event.clientY);
       setPadelNavVisible(insideNav);
     };
-
     const hideNav = () => setPadelNavVisible(false);
     window.addEventListener("pointermove", onPointerMove, { passive: true });
     window.addEventListener("pointerleave", hideNav);

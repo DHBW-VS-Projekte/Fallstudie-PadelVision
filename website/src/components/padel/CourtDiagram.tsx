@@ -137,7 +137,7 @@ export default function CourtDiagram() {
                 onFocus={() => setHovered(area.id)}
                 onBlur={() => setHovered(null)}
                 className={`interactive-card group flex min-h-14 items-center gap-3 rounded-2xl border px-3 py-2 text-left text-sm font-medium ${
-                  isSelected ? "border-accent bg-accent text-on-accent" : "border-line bg-card hover:text-foreground"
+                  isSelected ? "border-brand-green bg-brand-green text-white" : "border-line bg-card hover:text-foreground"
                 }`}
               >
                 <Icon aria-hidden="true" className={`size-5 shrink-0 ${isSelected ? "" : "text-accent-2"}`} />

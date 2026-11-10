@@ -4,6 +4,7 @@
  * Alle Kontaktdaten sind bewusst erkennbare PLATZHALTER (.example-Domain).
  */
 import Link from "next/link";
+import LogoMark from "@/components/layout/LogoMark";
 
 export default async function Footer() {
   "use cache";
@@ -18,9 +19,12 @@ export default async function Footer() {
     <footer className="border-t border-line bg-surface">
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 sm:px-8 md:grid-cols-3">
         <div>
-          <p className="text-xl font-semibold tracking-tight">
-            Padel<span className="text-accent">Vision</span>
-          </p>
+          <div className="flex items-center gap-3">
+            <LogoMark />
+            <p className="text-xl font-semibold tracking-tight">
+              Padel<span className="text-accent">Vision</span>
+            </p>
+          </div>
           <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted">
             2 Indoor-Courts, 1 Outdoor-Court, Kurse und Turniere.
           </p>

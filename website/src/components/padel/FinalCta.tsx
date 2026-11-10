@@ -20,7 +20,7 @@ export default function FinalCta() {
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-hero-ink/85">{finalCta.text}</p>
           <div className="mt-10 flex flex-wrap justify-center gap-3">
-            <Link href="/buchung" className="group inline-flex min-h-12 items-center gap-2 rounded-full bg-accent px-7 font-semibold text-on-accent shadow-lift transition-transform hover:-translate-y-0.5">
+            <Link href="/buchung" className="group inline-flex min-h-12 items-center gap-2 rounded-full bg-brand-green px-7 font-semibold text-white shadow-lift transition-transform hover:-translate-y-0.5">
               {finalCta.primary}
               <ArrowRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-1" />
             </Link>

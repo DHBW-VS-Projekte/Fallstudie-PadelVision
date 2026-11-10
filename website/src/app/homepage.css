@@ -64,30 +64,12 @@
   letter-spacing: 3px;
   font-weight: 600;
 }
-.pv-mark {
-  position: relative;
+.pv-logo-mark {
   display: block;
-  width: 43px;
-  height: 43px;
-  border: 3px solid currentColor;
-  border-radius: 50%;
-  transform: rotate(-30deg);
+  width: 36px;
+  height: 54px;
+  object-fit: contain;
   flex-shrink: 0;
-}
-.pv-mark span {
-  position: absolute;
-  top: 11px;
-  left: -5px;
-  width: 46px;
-  height: 5px;
-  border-radius: 8px;
-  background: var(--pv-cream);
-  border-top: 3px solid currentColor;
-  transform: rotate(-35deg);
-}
-.pv-mark span + span {
-  top: 22px;
-  transform: rotate(-35deg);
 }
 .pv-nav {
   display: flex;
@@ -607,9 +589,6 @@
 .pv-logo-footer {
   color: #f8f4ed !important;
 }
-.pv-logo-footer .pv-mark span {
-  background: #082820;
-}
 .pv-footer-main > div:first-child > p {
   font-size: 13px;
   line-height: 1.8;
@@ -689,16 +668,9 @@
   .pv-logo small {
     font-size: 7px;
   }
-  .pv-mark {
-    width: 35px;
-    height: 35px;
-  }
-  .pv-mark span {
-    width: 37px;
-    top: 8px;
-  }
-  .pv-mark span + span {
-    top: 18px;
+  .pv-logo-mark {
+    width: 32px;
+    height: 48px;
   }
   .pv-nav {
     display: none;
