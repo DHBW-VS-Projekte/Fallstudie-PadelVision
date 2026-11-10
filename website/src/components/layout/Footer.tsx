@@ -6,8 +6,7 @@
 import Link from "next/link";
 import LogoMark from "@/components/layout/LogoMark";
 
-export default async function Footer() {
-  "use cache";
+export default function Footer() {
 
   // Hinweis zum Jahr: Die Seite wird statisch beim Build erzeugt. Das Jahr
   // "friert" also auf das Build-Jahr ein. Für ein Uni-Projekt ist das okay,
