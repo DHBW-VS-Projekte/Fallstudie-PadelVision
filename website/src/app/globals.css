@@ -165,8 +165,10 @@ html:has([data-padel-nav-visible="true"]) .chapter-nav {
     opacity: 1;
     pointer-events: auto;
   }
+}
+@media (max-width: 800px) {
   .chapter-nav {
-    top: 4rem;
+    top: 73px;
   }
 }
 /* Einheitlicher, gut sichtbarer Tastatur-Fokus (nur bei Tastaturbedienung) */

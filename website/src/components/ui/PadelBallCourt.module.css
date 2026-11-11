@@ -1,0 +1,46 @@
+.scene {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: visible;
+  isolation: isolate;
+}
+
+.scene :global(.padel-ball-canvas) {
+  position: absolute !important;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.label,
+.note {
+  position: absolute;
+  z-index: 1;
+  color: #a45b40;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.label {
+  top: 9%;
+  right: 2%;
+  transform: rotate(5deg);
+}
+
+.note {
+  bottom: 8%;
+  left: 0;
+  color: #103b30;
+  transform: rotate(-5deg);
+}
+
+@media (max-width: 420px) {
+  .label,
+  .note {
+    font-size: 7px;
+    letter-spacing: 0.16em;
+  }
+}
