@@ -1,0 +1,33 @@
+-- =====================================================================
+-- seed.sql – AUTOMATISCH ERZEUGT aus src/data/catalog.json
+-- NICHT von Hand bearbeiten: npm run seed erzeugt die Datei neu.
+-- =====================================================================
+
+INSERT INTO locations (slug, name, timezone) VALUES ('konstanz', 'PadelVision Konstanz', 'Europe/Berlin') ON DUPLICATE KEY UPDATE name = VALUES(name), timezone = VALUES(timezone);
+INSERT INTO locations (slug, name, timezone) VALUES ('marbella', 'PadelVision Marbella', 'Europe/Madrid') ON DUPLICATE KEY UPDATE name = VALUES(name), timezone = VALUES(timezone);
+INSERT INTO locations (slug, name, timezone) VALUES ('porto-vecchio', 'PadelVision Porto-Vecchio', 'Europe/Paris') ON DUPLICATE KEY UPDATE name = VALUES(name), timezone = VALUES(timezone);
+INSERT INTO locations (slug, name, timezone) VALUES ('santorini', 'PadelVision Santorini', 'Europe/Athens') ON DUPLICATE KEY UPDATE name = VALUES(name), timezone = VALUES(timezone);
+INSERT INTO locations (slug, name, timezone) VALUES ('chania', 'PadelVision Chania', 'Europe/Athens') ON DUPLICATE KEY UPDATE name = VALUES(name), timezone = VALUES(timezone);
+
+INSERT INTO courts (id, location_slug, name, kind, is_panorama) VALUES ('konstanz-1', 'konstanz', 'Court 1 · Seeblick', 'indoor', 0) ON DUPLICATE KEY UPDATE location_slug = VALUES(location_slug), name = VALUES(name), kind = VALUES(kind), is_panorama = VALUES(is_panorama);
+INSERT INTO courts (id, location_slug, name, kind, is_panorama) VALUES ('konstanz-2', 'konstanz', 'Court 2 · Alpenblick', 'indoor', 0) ON DUPLICATE KEY UPDATE location_slug = VALUES(location_slug), name = VALUES(name), kind = VALUES(kind), is_panorama = VALUES(is_panorama);
+INSERT INTO courts (id, location_slug, name, kind, is_panorama) VALUES ('konstanz-3', 'konstanz', 'Court 3 · Sonnenterrasse', 'outdoor', 0) ON DUPLICATE KEY UPDATE location_slug = VALUES(location_slug), name = VALUES(name), kind = VALUES(kind), is_panorama = VALUES(is_panorama);
+INSERT INTO courts (id, location_slug, name, kind, is_panorama) VALUES ('marbella-1', 'marbella', 'Court Palmera', 'indoor', 0) ON DUPLICATE KEY UPDATE location_slug = VALUES(location_slug), name = VALUES(name), kind = VALUES(kind), is_panorama = VALUES(is_panorama);
+INSERT INTO courts (id, location_slug, name, kind, is_panorama) VALUES ('marbella-2', 'marbella', 'Court Hohenlohe', 'indoor', 0) ON DUPLICATE KEY UPDATE location_slug = VALUES(location_slug), name = VALUES(name), kind = VALUES(kind), is_panorama = VALUES(is_panorama);
+INSERT INTO courts (id, location_slug, name, kind, is_panorama) VALUES ('marbella-3', 'marbella', 'Panorama-Court', 'outdoor', 1) ON DUPLICATE KEY UPDATE location_slug = VALUES(location_slug), name = VALUES(name), kind = VALUES(kind), is_panorama = VALUES(is_panorama);
+INSERT INTO courts (id, location_slug, name, kind, is_panorama) VALUES ('marbella-4', 'marbella', 'Court Costa', 'outdoor', 0) ON DUPLICATE KEY UPDATE location_slug = VALUES(location_slug), name = VALUES(name), kind = VALUES(kind), is_panorama = VALUES(is_panorama);
+INSERT INTO courts (id, location_slug, name, kind, is_panorama) VALUES ('marbella-5', 'marbella', 'Court Brisa', 'outdoor', 0) ON DUPLICATE KEY UPDATE location_slug = VALUES(location_slug), name = VALUES(name), kind = VALUES(kind), is_panorama = VALUES(is_panorama);
+INSERT INTO courts (id, location_slug, name, kind, is_panorama) VALUES ('marbella-6', 'marbella', 'Court Sol', 'outdoor', 0) ON DUPLICATE KEY UPDATE location_slug = VALUES(location_slug), name = VALUES(name), kind = VALUES(kind), is_panorama = VALUES(is_panorama);
+INSERT INTO courts (id, location_slug, name, kind, is_panorama) VALUES ('porto-vecchio-1', 'porto-vecchio', 'Court Pinienwald', 'outdoor', 0) ON DUPLICATE KEY UPDATE location_slug = VALUES(location_slug), name = VALUES(name), kind = VALUES(kind), is_panorama = VALUES(is_panorama);
+INSERT INTO courts (id, location_slug, name, kind, is_panorama) VALUES ('porto-vecchio-2', 'porto-vecchio', 'Court Lagune', 'outdoor', 0) ON DUPLICATE KEY UPDATE location_slug = VALUES(location_slug), name = VALUES(name), kind = VALUES(kind), is_panorama = VALUES(is_panorama);
+INSERT INTO courts (id, location_slug, name, kind, is_panorama) VALUES ('porto-vecchio-3', 'porto-vecchio', 'Court Maquis', 'outdoor', 0) ON DUPLICATE KEY UPDATE location_slug = VALUES(location_slug), name = VALUES(name), kind = VALUES(kind), is_panorama = VALUES(is_panorama);
+INSERT INTO courts (id, location_slug, name, kind, is_panorama) VALUES ('santorini-1', 'santorini', 'Court Fira', 'indoor', 0) ON DUPLICATE KEY UPDATE location_slug = VALUES(location_slug), name = VALUES(name), kind = VALUES(kind), is_panorama = VALUES(is_panorama);
+INSERT INTO courts (id, location_slug, name, kind, is_panorama) VALUES ('santorini-2', 'santorini', 'Court Caldera', 'outdoor', 1) ON DUPLICATE KEY UPDATE location_slug = VALUES(location_slug), name = VALUES(name), kind = VALUES(kind), is_panorama = VALUES(is_panorama);
+INSERT INTO courts (id, location_slug, name, kind, is_panorama) VALUES ('santorini-3', 'santorini', 'Court Oia', 'outdoor', 0) ON DUPLICATE KEY UPDATE location_slug = VALUES(location_slug), name = VALUES(name), kind = VALUES(kind), is_panorama = VALUES(is_panorama);
+INSERT INTO courts (id, location_slug, name, kind, is_panorama) VALUES ('chania-1', 'chania', 'Court Hafen', 'indoor', 0) ON DUPLICATE KEY UPDATE location_slug = VALUES(location_slug), name = VALUES(name), kind = VALUES(kind), is_panorama = VALUES(is_panorama);
+INSERT INTO courts (id, location_slug, name, kind, is_panorama) VALUES ('chania-2', 'chania', 'Court Leuchtturm', 'indoor', 0) ON DUPLICATE KEY UPDATE location_slug = VALUES(location_slug), name = VALUES(name), kind = VALUES(kind), is_panorama = VALUES(is_panorama);
+INSERT INTO courts (id, location_slug, name, kind, is_panorama) VALUES ('chania-3', 'chania', 'Court Olivenhain', 'outdoor', 0) ON DUPLICATE KEY UPDATE location_slug = VALUES(location_slug), name = VALUES(name), kind = VALUES(kind), is_panorama = VALUES(is_panorama);
+INSERT INTO courts (id, location_slug, name, kind, is_panorama) VALUES ('chania-4', 'chania', 'Court Zitronenhain', 'outdoor', 0) ON DUPLICATE KEY UPDATE location_slug = VALUES(location_slug), name = VALUES(name), kind = VALUES(kind), is_panorama = VALUES(is_panorama);
+INSERT INTO courts (id, location_slug, name, kind, is_panorama) VALUES ('chania-5', 'chania', 'Court Taverna', 'outdoor', 0) ON DUPLICATE KEY UPDATE location_slug = VALUES(location_slug), name = VALUES(name), kind = VALUES(kind), is_panorama = VALUES(is_panorama);
+
+INSERT IGNORE INTO app_state (id, availability_version) VALUES (1, 0);

@@ -1,0 +1,30 @@
+# =====================================================================
+# api/.htaccess – Schutz der PHP-API (Apache)
+# - keine Verzeichnisauflistung
+# - Konfigurationsdateien und Daten nie direkt ausliefern
+# - lib/, data/ und tests/ haben zusätzlich eine eigene .htaccess "deny all"
+# Bewusst KEINE php_flag/php_value-Zeilen: Bei vielen Hostern (PHP-FPM/CGI)
+# führen sie zu "500 Internal Server Error". PHP-Einstellungen setzt
+# lib/bootstrap.php per ini_set().
+# =====================================================================
+Options -Indexes
+
+<FilesMatch "^(config|config\.local|config\.example)\.php$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+<FilesMatch "\.(sql|json|lock|md|log)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>

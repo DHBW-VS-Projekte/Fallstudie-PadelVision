@@ -1,0 +1,422 @@
+### PadelVision – Buchungssystem (/buchung) · Einrichtung, Architektur, Präsentation
+
+> Gruppenprojekt Wirtschaftsinformatik · Demo-System · wird nach der Präsentation offline genommen.
+
+---
+
+#### 1. Überblick in 30 Sekunden
+
+| Teil | Technik | Wo es läuft |
+|---|---|---|
+| Website (/, /padel, /courts, /events, /buchung, /verwaltung) | Next.js 16 als **statischer Export** (`out/`) | Webspace (Apache), per FTP hochgeladen |
+| Buchungslogik | **PHP 8.1+** im Ordner `api/` | derselbe Webspace, gleiche Domain |
+| Datenbank | **MySQL 5.7/8.0 oder MariaDB 10.4+** (InnoDB, utf8mb4) | Hoster – nur PHP & phpMyAdmin kommen dran |
+| Live-Updates | **Polling** (alle 5 s eine winzige Versionsabfrage) | Browser ↔ `api/version.php` |
+
+**Einzige Quelle der Wahrheit** für Standorte, Courts, Öffnungszeiten und Preise: `src/data/catalog.json`.
+Das Frontend importiert sie direkt, `npm run build` kopiert sie nach `api/data/` (für PHP) und erzeugt daraus `database/seed.sql`.
+
+---
+
+#### 2. Warum es KEINE Doppelbuchungen geben kann
+
+##### Das Problem: Race Condition
+Ein naiver Ablauf wäre „erst prüfen, dann speichern“:
+
+```
+Anfrage A: SELECT … → frei          Anfrage B: SELECT … → frei
+Anfrage A: INSERT … → gebucht       Anfrage B: INSERT … → gebucht   ← DOPPELBUCHUNG
+```
+
+Beide Anfragen sehen „frei“, weil die andere noch nicht geschrieben hat. Bei 30 Personen in derselben Sekunde passiert das garantiert.
+
+##### Die Lösung: Zellen-Modell + UNIQUE-Schlüssel
+- Jeder Court-Tag ist in **30-Minuten-Zellen** geteilt. Eine 90-Minuten-Buchung belegt **genau 3 Zellen**.
+- Die Tabelle `slot_cells` hat `UNIQUE (court_id, cell_start)`: Dieselbe Zelle kann **physisch nur einmal** existieren.
+- Die 3 Zellen werden in **einer Transaktion** eingefügt. Scheitert eine (MySQL-Fehler **1062** „Duplicate entry“), wird alles zurückgerollt → Antwort `SLOT_TAKEN`.
+- Wir fragen also **nicht vorher**, sondern lassen die **Datenbank entscheiden**. Von 30 gleichzeitigen INSERTs gewinnt genau eines.
+- Überlappungen sind automatisch abgedeckt: Eine Buchung um 10:00 belegt 10:00/10:30/11:00. Ein Start um 09:00 (09:00/09:30/10:00) oder 11:00 (11:00/11:30/12:00) braucht eine gemeinsame Zelle → scheitert.
+
+##### Weitere Sicherungen
+| Thema | Lösung |
+|---|---|
+| Reservierung beim Klick | **Hold**: 3 Zellen mit Status `hold`, 5 Minuten gültig. Der Browser bekommt einen Zufalls-Token, in der DB steht nur dessen **SHA-256-Hash**. |
+| Abgelaufene Holds | gelten als frei; werden beim nächsten Hold auf dieselben Zellen gelöscht. Der Browser zeigt sie anhand von `expiresAt` sofort als frei. |
+| Doppelklick / Netzwerk-Wiederholung | **Idempotenz-Schlüssel** (`crypto.randomUUID`) mit `UNIQUE (idempotency_key)` → zweite Anfrage liefert dieselbe Buchung. |
+| Max. 2 offene Buchungen pro E-Mail | Zeile in `email_guards` wird mit `SELECT … FOR UPDATE` **gesperrt** → gleichzeitige Buchungen derselben E-Mail laufen nacheinander. |
+| Deadlocks (1213) / Lock-Timeout (1205) | bis zu 3 Versuche mit zufälliger Pause. |
+| Isolationslevel | `READ COMMITTED`: weniger Gap-Locks → weniger Deadlocks bei vielen Holds. Die Korrektheit hängt nicht davon ab, sondern am UNIQUE-Schlüssel. |
+| Preise | rechnet **immer PHP** und speichert sie mit der Buchung. Ein Preis aus dem Browser wird nie übernommen. |
+
+##### SQL-Nachweis (phpMyAdmin → Datenbank → Reiter „SQL“)
+Zeigt alle Paare bestätigter Buchungen, die sich auf demselben Court überlappen. **Erwartet: 0 Zeilen.**
+
+```sql
+SELECT a.booking_code, b.booking_code, a.court_id, a.starts_at, b.starts_at
+FROM bookings a
+JOIN bookings b
+  ON a.court_id = b.court_id
+ AND a.id < b.id
+ AND a.status = 'confirmed' AND b.status = 'confirmed'
+ AND a.starts_at < b.ends_at
+ AND b.starts_at < a.ends_at;
+```
+
+---
+
+#### 3. Live-Aktualisierung und Last bei 30 Personen
+
+- `GET /api/version.php` liefert nur `{ version: 123 }` – **ein SELECT auf eine Zeile**. Die Zahl steigt bei jeder Änderung an der Belegung (in derselben Transaktion).
+- Im Schritt „Uhrzeit“ und im Admin wird **alle 5 s** gefragt; im Hintergrund-Tab gar nicht. Zufälliger Versatz 0–500 ms.
+- Nur wenn sich die Version ändert, wird die Belegung geladen (`availability.php`, mit ETag → bei gleicher Version `304` ohne Inhalt).
+- Fehler → „Verbindung wird wiederhergestellt …“, Wartezeit 5 s → 10 s → 20 s → max. 30 s.
+
+**Rechnung:** 30 Geräte × 0,2 Versionsabfragen/s = **6 Anfragen/s**, jede ein Mini-SELECT.
+Bei einer Belegungsänderung laden aktive Buchungsseiten ihre Belegung neu; das Admin-Dashboard lädt seine Übersicht nach. Damit sinkt die periodische Last gegenüber einem 2-Sekunden-Polling deutlich; die tatsächliche Kapazität hängt vom Webhoster ab.
+
+**Spam-Schutz:** Grenzen **pro Gerät** (Cookie `pv_device`): 20 Holds, 10 Buchungsversuche, 5 Stornos und 20 Freigaben pro Minute.
+Die zusätzliche IP-Notbremse bleibt bei 600 schreibenden Anfragen pro Minute. Das Polling zählt nicht mit.
+
+---
+
+#### 4. Dateibaum
+
+```
+Website projekt/
+├── BUCHUNG-README.md                         NEU  (diese Datei)
+├── next.config.ts                            GEÄNDERT
+├── package.json                              GEÄNDERT
+├── .gitignore                                GEÄNDERT
+├── .env.development.local.example            NEU
+├── src/
+│   ├── data/catalog.json                     NEU  – Standorte, Courts, Preise, Regeln
+│   ├── styles/booking.css                    NEU  – Slot-Tokens, Ticket, Druck
+│   ├── lib/booking/                          NEU  – api.ts, types.ts, errors.ts, format.ts,
+│   │                                                pricing-display.ts, catalog.ts
+│   ├── components/booking/                   NEU  – Wizard, Schritte, Kacheln, Ticket, Hooks
+│   ├── components/admin/                     NEU  – Login, Dashboard, Tabelle, Belegungsplan …
+│   └── app/
+│       ├── buchung/page.tsx                  NEU
+│       ├── buchung/stornieren/page.tsx       NEU
+│       ├── verwaltung/page.tsx               NEU
+│       ├── page.tsx, padel/, courts/         UNVERÄNDERT
+│       └── globals.css, layout.tsx           UNVERÄNDERT
+├── api/                                      NEU  – komplette PHP-API (siehe Kapitel 5)
+├── database/                                 NEU  – schema.sql, seed.sql, reset.sql
+├── scripts/                                  NEU  – generate-seed, copy-catalog, loadtest
+└── tests/booking.test.mjs                    NEU
+```
+
+##### Was in GEÄNDERTEN Dateien geändert wurde
+| Datei | Änderung | Grund |
+|---|---|---|
+| `next.config.ts` | `output: "export"`, `trailingSlash: true`, `images: { unoptimized: true }` | Webspace hat kein Node.js → fertige HTML-Dateien; Apache findet `/buchung/index.html`; Bild-Optimierung braucht einen Node-Server. Falls deine Datei schon andere Einstellungen hatte: übernehmen. |
+| `package.json` | Skripte `seed`, `prebuild` (läuft automatisch vor `build`), `test`, `test:php`, `loadtest`; `@tailwindcss/postcss` eingetragen | Katalog/SQL vor jedem Build kopieren. **Falls du weitere Pakete installiert hast, diese in `dependencies` wieder ergänzen.** |
+| `.gitignore` | `api/config.php`, `api/config.local.php`, `padelvision-config.php`, `api/data/installed.lock`, alle `.env*` außer `*.example` | Zugangsdaten nie auf GitHub |
+
+**Aktueller Stand:** `globals.css` enthält die globalen hellen Design-Tokens. Darkmode-Script, Theme-Schalter und alte `Navbar.tsx` wurden entfernt; `/buchung` und `/buchung/stornieren` verwenden `HomeNavbar`. „Court buchen“ bleibt ein Call-to-Action, kein eigener Menüpunkt.
+
+> **Navbar prüfen:** /buchung darf NICHT als Menüpunkt erscheinen. Falls in `Navbar.tsx` in `NAV_LINKS` noch `{ href: "/buchung", label: "Buchung" }` steht, diese eine Zeile löschen. Der Button „Court buchen“ muss auf `/buchung` zeigen.
+
+##### Statischer Export – was die bestehenden Seiten brauchen
+| Prüfpunkt | Ergebnis |
+|---|---|
+| `next/image` | funktioniert durch `images.unoptimized` |
+| `cookies()`, `headers()`, `searchParams` in Server Components | in /, /padel, /courts nicht verwendet (sofern ihr nichts ergänzt habt) |
+| `/courts` verlinkt `/buchung?standort=…` | funktioniert – der Parameter wird auf /buchung im Browser gelesen |
+| Route Handlers, rewrites, redirects | werden im Export ignoriert – nicht verwendet |
+| Wenn `npm run build` meldet „… couldn't be rendered statically“ | Fehlermeldung schicken – meist eine Zeile `export const dynamic = …` oder ein `searchParams`-Prop entfernen |
+
+---
+
+#### 5. Die PHP-API
+
+| Endpunkt | Methode | Zweck |
+|---|---|---|
+| `version.php` | GET | `{ version }` fürs Polling |
+| `availability.php?court=&date=` | GET | Belegung eines Courts/Tages (ETag, ohne persönliche Daten) |
+| `days.php?court=` | GET | 14-Tage-Leiste (zusätzlich – 1 statt 14 Anfragen) |
+| `summary.php?location=` | GET | „Heute noch X Slots frei“ |
+| `hold.php` | POST | Slot 5 Min. reservieren |
+| `release.php` | POST | Reservierung freigeben |
+| `book.php` | POST | Buchung bestätigen |
+| `cancel.php` | POST | Stornieren (Buchungsnummer + E-Mail) |
+| `admin/session.php, login.php, logout.php, bookings.php, stats.php, occupancy.php, cancel.php, reset.php` | GET/POST | Verwaltung (Session-geschützt) |
+| `install.php?token=` | GET | richtet die Datenbank ein, danach gesperrt |
+
+Antworten immer als `{ "ok": true, "data": … }` oder `{ "ok": false, "code": "SLOT_TAKEN", "message": "…" }`.
+Fehlercodes: `SLOT_TAKEN, HOLD_EXPIRED, LIMIT_REACHED, RATE_LIMITED, OUTSIDE_HOURS, VALIDATION, NOT_FOUND, UNAUTHORIZED, SERVER_ERROR`.
+
+**Indizes und welche Abfrage sie nutzt**
+| Index | Abfrage |
+|---|---|
+| `slot_cells uq_cell (court_id, cell_start)` | Schutz vor Doppelbuchung (INSERT) |
+| `slot_cells idx_cells_lookup (court_id, cell_start, status)` | Belegung eines Tages / Belegungsplan |
+| `slot_cells idx_cells_device`, `idx_cells_hold`, `idx_cells_booking` | alten Hold des Geräts löschen, Hold bestätigen/freigeben, Storno |
+| `bookings idx_bookings_email (email_normalized, status, ends_at)` | offene Buchungen pro E-Mail zählen |
+| `bookings idx_bookings_created` | Admin-Liste „neueste zuerst“, „heute gebucht“ |
+| `rate_events idx_rate_bucket (bucket, created_at)` | Rate Limit zählen |
+
+**Admin-Login:** PHP-Sessions statt Tabelle `admin_sessions` – für ein einziges Admin-Konto einfacher und gleich sicher (`session_regenerate_id`, HttpOnly, SameSite=Strict, Secure live, 8 h, 5 Fehlversuche → 1 Min. Sperre).
+
+---
+
+#### 6. Abweichungen gegenüber der Vorgabe (mit Begründung)
+
+| Abweichung | Grund |
+|---|---|
+| Neue Tokens in `src/styles/booking.css` statt in `globals.css` | So bleiben booking-spezifische Slot-Zustände getrennt von den globalen Design-Tokens. |
+| Zusätzliche Endpunkte `days.php`, `admin/session.php` | weniger Anfragen bzw. Login-Status beim Laden |
+| Zusätzliche Dateien `wizardState.ts`, `ErrorBoundary.tsx`, `CancelForm.tsx`, `AdminApp.tsx`, `lib/booking/catalog.ts`, `api/lib/bootstrap.php`, `slots.php`, `booking.php` | Logik an einer Stelle, Komponenten übersichtlich |
+| Keine Tabelle `admin_sessions` | siehe Kapitel 5 |
+| Keine zod-Bibliothek | Prüfung mit eigenen kleinen Funktionen in `format.ts` (gleiche Regeln wie PHP) |
+| Abgelaufene Holds werden mit der PHP-Zeit gelöscht statt `UTC_TIMESTAMP()` | `expires_at` wird mit derselben PHP-Uhr geschrieben – kein Uhrenversatz zwischen PHP- und DB-Server |
+| Court-Namen über die vorgegebenen hinaus (z. B. „Court Palmera“, „Court Fira“) erfunden | in `catalog.json` frei änderbar, danach `npm run seed` |
+| `/verwaltung` ohne Website-Navbar | Beamer zeigt nur das Dashboard |
+
+---
+
+#### 7. Präsentations-taugliche Seiten
+
+- **/buchung** – Wizard: Standort → Court → Datum → Uhrzeit (live) → Daten → Prüfen → Ticket. `?standort=marbella` wählt vor und springt zu Schritt 2, „Standort: … · ändern“ jederzeit sichtbar.
+- **/buchung/stornieren** – Buchungsnummer + E-Mail.
+- **/verwaltung** – Login, Kennzahlen, Live-Feed, Belegungsplan, Tabelle, Stornieren, Reset (RESET eintippen), Präsentationsmodus.
+
+---
+
+#### 8. EINRICHTUNGSANLEITUNG (Schritt für Schritt)
+
+##### a) Im Kundenbereich des Hosters nachsehen
+| Was | Wo (meist) | Ziel |
+|---|---|---|
+| **PHP-Version** | „Hosting“ / „PHP-Einstellungen“ / „PHP-Version“ | **8.1 oder neuer** einstellen (8.2/8.3 sind ideal). Änderung wirkt nach wenigen Minuten. |
+| **MySQL/MariaDB-Version** | „Datenbanken“ → Detailansicht, oder phpMyAdmin-Startseite rechts („Server-Version“) | MySQL 5.7+ oder MariaDB 10.4+. Ältere Version: install.php zeigt eine Warnung; meist klappt es trotzdem. Sonst neue Datenbank anlegen – Hoster bieten oft die neueste Version an. |
+| **FTP-Zugang** | „FTP-Zugänge“ / „Benutzer“ | Server, Benutzer, Passwort notieren (SFTP bevorzugen) |
+| **Web-Verzeichnis** | Domain-Einstellungen („Zielverzeichnis“) | z. B. `/` oder `/htdocs` oder `/public_html` – dort kommt alles hin |
+| **phpMyAdmin** | „Datenbanken“ → „phpMyAdmin“ | zum Kontrollieren |
+| **SSL/HTTPS** | „Domains“ → „SSL“ / „Let's Encrypt“ | **aktivieren** – ohne HTTPS funktionieren Login-Cookies live nicht |
+
+##### b) Leere Datenbank anlegen
+1. Kundenbereich → „Datenbanken“ → „Neue MySQL-Datenbank“.
+2. Notieren: **Host** (oft NICHT `localhost`, z. B. `rdbms.strato.de` oder `mysqlXX.hoster.de`), **Datenbankname**, **Benutzer**, **Passwort**, ggf. **Port** (meist 3306).
+3. Tabellen **nicht** von Hand anlegen – das macht später `install.php`.
+
+##### c) Lokal entwickeln unter Windows
+
+**Einmalig – Dateien entpacken:** ZIP in den Ordner `Website projekt` entpacken (Ersetzen bestätigen). Danach liegen `api`, `database`, `scripts`, `src`, `tests` direkt neben `package.json`.
+
+**1. Lokale Testdatenbank im vorhandenen MySQL Server 8.0** (VS-Code-Terminal, PowerShell):
+```powershell
+& "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -u root -p
+```
+Root-Passwort eingeben, dann im `mysql>`-Prompt:
+```sql
+CREATE DATABASE padelvision CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'padelvision'@'localhost' IDENTIFIED BY 'LokalesPasswort123!';
+GRANT ALL PRIVILEGES ON padelvision.* TO 'padelvision'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+```
+> In der Eingabeaufforderung (cmd) statt PowerShell ohne `&` davor: `"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -u root -p`
+
+**2. XAMPP: NUR Apache starten** (XAMPP Control Panel → bei Apache „Start“). **XAMPP-MySQL NICHT starten** – sonst Port-Konflikt auf 3306 mit eurem MySQL Server 8.0. PHP aus XAMPP spricht einfach mit dem vorhandenen MySQL.
+
+**3. Katalog + SQL-Dateien vorbereiten** (im Projektordner):
+```powershell
+npm run seed
+node scripts/copy-catalog.mjs
+```
+
+**4. api-Ordner für XAMPP bereitstellen** – zwei Möglichkeiten:
+- **Einfach (Kopie):** den Ordner `Website projekt\api` nach `C:\xampp\htdocs\api` kopieren. Nach jeder PHP-Änderung erneut kopieren.
+- **Komfortabel (Verknüpfung, Änderungen sofort aktiv):** cmd **als Administrator** öffnen:
+  ```cmd
+  mklink /J C:\xampp\htdocs\api "C:\Pfad\zu\Website projekt\api"
+  ```
+
+**5. `config.local.php` anlegen:** In `C:\xampp\htdocs\api` (bzw. bei der Verknüpfung in `Website projekt\api`) `config.example.php` kopieren → `config.local.php` nennen und ausfüllen:
+```php
+'DB_HOST' => '127.0.0.1',
+'DB_NAME' => 'padelvision',
+'DB_USER' => 'padelvision',
+'DB_PASS' => 'LokalesPasswort123!',
+'ADMIN_PASSWORD_HASH' => '…',   // Befehl siehe e)
+'APP_SECRET' => '…',            // Befehl siehe e)
+'INSTALL_TOKEN' => '…',
+'LOADTEST_TOKEN' => '…',
+'DEV_CORS_ORIGIN' => 'http://localhost:3000',
+'IS_PRODUCTION' => false,
+```
+> `127.0.0.1` statt `localhost` vermeidet unter Windows Socket-Probleme.
+
+**6. PHP-Logiktests (ohne Datenbank):**
+```powershell
+C:\xampp\php\php.exe api\tests\run.php
+```
+Erwartet: „… bestanden, 0 fehlgeschlagen“.
+
+**7. Lokale Datenbank einrichten:** Browser → `http://localhost/api/install.php?token=EUER_INSTALL_TOKEN` → alles ✔.
+Zum erneuten Ausführen `api\data\installed.lock` löschen.
+
+**8. Frontend auf die lokale API zeigen lassen:** `.env.development.local.example` kopieren → `.env.development.local`:
+```
+NEXT_PUBLIC_API_BASE=http://localhost/api
+```
+> Wichtig: `.env.development.local` gilt **nur** für `npm run dev`. `npm run build` nutzt automatisch `/api` – so landet nie `localhost` auf dem Server.
+
+**9. Starten:**
+```powershell
+npm run dev
+```
+→ `http://localhost:3000/buchung/` und `http://localhost:3000/verwaltung/`.
+
+##### d) Live-Belegung lokal prüfen
+1. Zwei Browserfenster nebeneinander (eines davon **privat/inkognito** = anderes „Gerät“).
+2. In beiden: gleicher Standort, Court und Tag bis Schritt 4.
+3. Links eine Zeit anklicken → rechts wird sie innerhalb von ~5 s **schraffiert „gerade reserviert“**.
+4. Links buchen → rechts **„belegt“**. In `/verwaltung` erscheint die Buchung im Live-Feed.
+5. Rechts dieselbe Zeit erzwingen ist nicht möglich; bei gleichzeitigem Klick sieht einer „Schade – dieser Slot wurde gerade eben vergeben“ + Vorschläge.
+
+##### e) Online-`config.php` erstellen
+1. `api\config.example.php` kopieren → **`config.php`** (nur lokal auf deinem Rechner, kommt nicht auf GitHub).
+2. Werte vom Hoster aus b) eintragen, `IS_PRODUCTION` auf **`true`**, `DEV_CORS_ORIGIN` darf bleiben (ist live wirkungslos).
+3. **Geheimnisse erzeugen** (Windows mit XAMPP):
+   ```powershell
+   # Admin-Passwort-Hash (DeinPasswort ersetzen):
+   C:\xampp\php\php.exe -r "echo password_hash('DeinPasswort', PASSWORD_DEFAULT), PHP_EOL;"
+   # APP_SECRET, INSTALL_TOKEN, LOADTEST_TOKEN – je einmal ausführen:
+   C:\xampp\php\php.exe -r "echo bin2hex(random_bytes(32)), PHP_EOL;"
+   ```
+   Den Hash in einfache Anführungszeichen `'…'` setzen (er enthält `$`).
+4. **Wo liegt die config.php?**
+   - **Variante A (am sichersten):** Kann man per FTP eine Ebene **über** dem Web-Verzeichnis Dateien ablegen, dort als `padelvision-config.php` speichern. PHP findet sie automatisch, per URL ist sie unerreichbar.
+   - **Variante B (Standard):** als `api/config.php`. Die `.htaccess` sperrt den direkten Aufruf (Test: `https://eure-domain.de/api/config.php` muss **403** liefern).
+
+##### f) Bauen und hochladen
+1. Im Projektordner:
+   ```powershell
+   npm run build
+   ```
+   (führt vorher automatisch `seed` + `copy-catalog` aus). Ergebnis: Ordner `out/`.
+2. **Backup:** In FileZilla den bisherigen Inhalt des Web-Verzeichnisses auf deinen Rechner herunterladen.
+3. **Hochladen** in das Web-Verzeichnis:
+   - den **Inhalt** von `out/` (nicht den Ordner `out` selbst!) → danach liegen dort `index.html`, `buchung/`, `courts/`, `_next/` …
+   - den Ordner **`api/`** komplett (inkl. `.htaccess`, `lib/`, `data/`, `install.php`) **plus deine Online-`config.php`** (Variante B).
+4. **NICHT hochladen:** `src`, `node_modules`, `.next`, `database`, `scripts`, `tests`, `api/tests`, `api/config.example.php`, `api/config.local.php`, `.env*`, `package.json`.
+   > FileZilla zeigt `.htaccess` evtl. nicht an: Menü „Server“ → „Anzeige versteckter Dateien erzwingen“.
+
+##### g) Datenbank automatisch einrichten
+1. Browser: `https://eure-domain.de/api/install.php?token=EUER_INSTALL_TOKEN`
+2. Statusseite prüfen: Verbindung ✔, PHP ✔, MySQL/MariaDB ✔, Tabellen ✔, 5 Standorte und 20 Courts ✔, Sperrdatei ✔.
+3. **`api/install.php` per FTP löschen.**
+4. phpMyAdmin: 7 Tabellen (`app_state, bookings, courts, email_guards, locations, rate_events, slot_cells`), `courts` hat 20 Zeilen.
+
+> **Alternative ohne Installer:** phpMyAdmin → Datenbank wählen → „Importieren“ → erst `database/schema.sql`, dann `database/seed.sql`.
+
+##### h) Live-Test
+1. Handy (mobile Daten) + Laptop: dieselbe Zeit wählen → Live-Anzeige wie in d).
+2. `https://eure-domain.de/verwaltung/` → Anmelden → Buchung erscheint im Feed.
+3. **Lasttest** (auf dem Laptop, Datum innerhalb der nächsten 13 Tage):
+   ```powershell
+   node scripts/loadtest.mjs --url https://eure-domain.de --court marbella-1 --date 2027-03-14 --time 18:00 --users 30 --token EUER_LOADTEST_TOKEN
+   ```
+   Erwartet: Tabelle mit ✔ und „✔ BESTANDEN – keine Doppelbuchung“.
+4. SQL-Nachweis aus Kapitel 2 in phpMyAdmin → 0 Zeilen.
+5. In `/verwaltung` **„Alle Testdaten zurücksetzen“** (RESET eintippen).
+
+##### i) Spätere Änderungen
+- Nur Frontend geändert → `npm run build` → **Inhalt von `out/`** erneut hochladen. Die Datenbank bleibt erhalten.
+- PHP geändert → nur die geänderten Dateien in `api/` hochladen (nie `config.php` überschreiben).
+- Standorte/Courts in `catalog.json` geändert → `npm run build`, `api/data/` hochladen, dann **seed.sql** in phpMyAdmin importieren (oder `installed.lock` löschen, `install.php` erneut hochladen, aufrufen, wieder löschen).
+- Bestehende Datenbank für Event-Buchungen aktualisieren → `api/data/event-bookings-migration.sql` einmalig in phpMyAdmin importieren. Neue Installationen erhalten die Event-Spalten direkt aus `schema.sql`.
+
+##### j) Auf GitHub pushen
+```powershell
+git status          # darf KEINE config.php / config.local.php / .env.development.local zeigen
+git add .
+git commit -m "Buchungssystem mit PHP-API"
+git push
+```
+Erscheint `api/config.php` doch: `git rm --cached api/config.php` und erneut committen.
+
+##### k) Häufige Fehler
+| Problem | Ursache | Lösung |
+|---|---|---|
+| install.php: „Falscher Datenbank-Host“ | Host ist nicht localhost | genauen Host aus dem Kundenbereich in `DB_HOST` |
+| „Zugriff verweigert“ / Access denied (1045) | Benutzer/Passwort falsch | im Kundenbereich prüfen, ggf. Passwort neu setzen |
+| install.php: „Datenbank existiert nicht“ (1049) | Tippfehler in `DB_NAME` | exakten Namen übernehmen (oft mit Präfix, z. B. `db123456_padel`) |
+| /buchung zeigt 404 | Ordner `out` statt dessen Inhalt hochgeladen, oder `trailingSlash` fehlt | Inhalt von `out/` direkt ins Web-Verzeichnis; Aufruf `/buchung/` |
+| `/api/…` gibt 404 | api-Ordner falsch abgelegt | `api/` muss direkt im Web-Verzeichnis neben `index.html` liegen |
+| 500 Internal Server Error | PHP-Version < 8.1 oder `.htaccess`-Problem | PHP auf 8.1+ stellen; zum Test `.htaccess` kurz umbenennen |
+| Buchung: „gerade nicht erreichbar“ | config.php fehlt / APP_SECRET < 32 Zeichen / DB nicht eingerichtet | install.php ausführen, config prüfen; PHP-Fehlerlog des Hosters ansehen |
+| Admin-Login klappt nicht | Seite ohne HTTPS (Secure-Cookie) oder falscher Hash | HTTPS aktivieren; Hash neu erzeugen, in `'…'` setzen |
+| „Anfrage von unbekannter Herkunft“ | Seite über andere Domain/IP aufgerufen | immer über die richtige Domain (mit https) |
+| Lokal: CORS-Fehler | `IS_PRODUCTION` ist true oder falscher `DEV_CORS_ORIGIN` | lokal `false`, Origin `http://localhost:3000` |
+| Lokal: XAMPP-Apache startet nicht | Port 80 belegt (Skype/IIS) | anderes Programm beenden oder Port in XAMPP ändern (dann `NEXT_PUBLIC_API_BASE=http://localhost:8080/api`) |
+| Alte Seite wird angezeigt | Browser-Cache | Strg + F5 bzw. privates Fenster |
+| `npm test` meldet Fehler bei `--experimental-strip-types` | Node zu alt | `node -v` → Node 22.6+ installieren (nodejs.org, LTS) |
+
+**Wenn der Hoster weiterhin langsam ist** (gleichzeitige PHP-Prozesse oder DB-Verbindungen): Polling in `src/components/booking/useLiveAvailability.ts` und `src/components/admin/AdminDashboard.tsx` auf 10 s erhöhen, neu bauen und hochladen.
+
+---
+
+#### 9. PRÄSENTATIONS-CHECKLISTE
+
+**Am Vortag**
+- [ ] `npm run build`, hochladen, `/`, `/padel`, `/courts`, `/buchung/` durchklicken (Hell + Dunkel)
+- [ ] Lasttest gegen die Live-Domain → „✔ BESTANDEN“
+- [ ] SQL-Nachweis → 0 Zeilen
+- [ ] `/verwaltung` → „Alle Testdaten zurücksetzen“
+- [ ] Admin-Login auf dem Präsentationslaptop testen
+- [ ] QR-Code auf `https://eure-domain.de/buchung/` erstellen (z. B. mit dem Teilen-Menü im Browser) und auf eine Folie legen
+- [ ] Datum wählen, das in den nächsten 13 Tagen liegt (für Porto-Vecchio: April–Oktober)
+
+**10 Minuten vorher**
+- [ ] WLAN des Raums testen, Seite auf dem eigenen Handy öffnen
+- [ ] `/verwaltung` am Beamer öffnen, anmelden, **Präsentationsmodus** an, Live-Anzeige zeigt „● Live“
+- [ ] Bei Bedarf noch einmal zurücksetzen
+
+**Während der Demo**
+- [ ] Beamer zeigt `/verwaltung` im Präsentationsmodus (Belegungsplan auf Marbella + heutigen Tag stellen)
+- [ ] Klasse scannt den QR-Code → `/buchung/`
+- [ ] „Alle auf Marbella, Panorama-Court, 18:00!“ → genau eine Person gewinnt, alle anderen sehen Vorschläge – live am Beamer sichtbar
+- [ ] Optional: SQL-Nachweis in phpMyAdmin zeigen (0 Zeilen)
+
+**Danach**
+- [ ] `/verwaltung` → „Alle Testdaten zurücksetzen“ (löscht Namen und E-Mails)
+- [ ] Website offline nehmen: Inhalte im Web-Verzeichnis löschen oder Domain deaktivieren
+- [ ] Datenbank im Kundenbereich löschen (oder in phpMyAdmin `database/reset.sql` ausführen)
+
+---
+
+#### 10. Abschlusskontrolle
+
+| # | Prüfpunkt | Status |
+|---|---|---|
+| 1 | Doppelbuchung durch UNIQUE (court_id, cell_start) unmöglich, auch bei Überlappung | ✔ umgesetzt (Zellen-Modell, 1 Transaktion, 1062 → SLOT_TAKEN); Logik-Tests vorhanden |
+| 2 | DB-Zugangsdaten und Admin-Passwort nicht im Frontend, nicht auf GitHub | ✔ nur in config.php (gitignored, .htaccess-gesperrt); Admin nur als Hash |
+| 3 | Keine persönlichen Daten in öffentlichen Endpunkten | ✔ availability/days/summary liefern nur Status; Ticket-Daten nur an den Buchenden selbst |
+| 4 | install.php nur mit Token und danach gesperrt | ✔ hash_equals + installed.lock; zusätzlich löschen |
+| 5 | Vorauswahl per ?standort=, änderbar; ohne Parameter keine | ✔ |
+| 6 | 14 Tage, Ortszeiten, Saisonpause, vergangene Zeiten ausgeblendet | ✔ serverseitig in PHP |
+| 7 | Max. 2 offene Buchungen pro E-Mail sicher | ✔ email_guards + FOR UPDATE |
+| 8 | Holds verfallen nach 5 Min. und blockieren nicht mehr | ✔ |
+| 9 | Admin nur mit Passwort, voller Name, E-Mail gekürzt, Reset | ✔ Kürzung in PHP |
+| 10 | Live per Polling in Buchung und Admin, Backoff | ✔ 5 s, Backoff bis 30 s |
+| 11 | Statischer Export für /, /padel, /courts, /events, /buchung, /verwaltung | ✔ `npm run build` |
+| 12 | Helles Design, eine h1 pro Seite, /buchung nicht als eigener Menüpunkt | ✔ globale Light-Tokens; Buchung nutzt die Hauptnavigation |
+| 13 | Lasttest-Skript vorhanden | ✔ `scripts/loadtest.mjs` |
+| 14 | `npm run lint`, `npm run build`, `npm test`, `php api/tests/run.php` | ⚠ **lokal zu prüfen**. `npm test` lief bei der Erstellung (12 bestanden, Abgleich mit courtsContent.ts läuft erst bei dir). PHP und MySQL standen bei der Erstellung **nicht** zur Verfügung – PHP-Code und SQL sind ungetestet. |
+
+---
+
+#### 11. Bekannte Einschränkungen und Ideen für später
+
+- **Polling statt echter Live-Verbindung:** bis zu ~5 s Verzögerung. Mit eigenem Server (Node/VPS) wären WebSockets oder Server-Sent Events möglich.
+- **Ein Admin-Konto**, kein Rollen-/Rechtesystem.
+- **Kein E-Mail-Versand, keine Bezahlung** (bewusst – Demo).
+- **QR-Muster auf dem Ticket ist dekorativ**, nicht scanbar.
+- **Flaggen-Emojis** werden unter Windows als Buchstaben (DE, ES …) angezeigt.
+- **Zeit „heute“ in der Verwaltung** = deutsche Zeit; Belegungspläne zeigen jeweils Ortszeit.
+- Ideen: Mitspieler einladen, Warteliste bei ausgebuchten Slots, Kalender-Datei (.ics) zum Ticket, Events von /courts direkt buchbar machen.
+

@@ -2,6 +2,8 @@ import Link from "next/link";
 import Footer from "@/components/layout/Footer";
 import HomeNavbar from "@/components/layout/HomeNavbar";
 
+const bookingPath = "/buchung";
+const clubPath = "/about";
 const courtsPath = "/courts";
 const communityPath = "/about#philosophy-title";
 const eventsPath = "/courts#events";

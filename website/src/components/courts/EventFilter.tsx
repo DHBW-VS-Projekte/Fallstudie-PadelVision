@@ -19,11 +19,12 @@ export interface EventFilterProps {
   /** Anzahl Events je Filter – auf dem Server berechnet */
   counts: Record<EventFilterValue, number>;
   children: ReactNode;
+  layout?: "timeline" | "grid";
 }
 
 const FILTERS: EventFilterValue[] = ["alle", "turnier", "kurs", "community", "camp"];
 
-export default function EventFilter({ counts, children }: EventFilterProps) {
+export default function EventFilter({ counts, children, layout = "timeline" }: EventFilterProps) {
   // useState: aktiver Filter. Bestimmt aria-pressed und data-filter.
   const [filter, setFilter] = useState<EventFilterValue>("alle");
   // useRef: Wrapper der Liste, um nach einem Filterwechsel an den Anfang zu scrollen.
@@ -32,7 +33,9 @@ export default function EventFilter({ counts, children }: EventFilterProps) {
 
   function choose(value: EventFilterValue) {
     setFilter(value);
-    wrapperRef.current?.querySelector("[data-event-track]")?.scrollTo({ left: 0, behavior: "instant" });
+    if (layout === "timeline") {
+      wrapperRef.current?.querySelector("[data-event-track]")?.scrollTo({ left: 0, behavior: "instant" });
+    }
   }
 
   function scrollEvents(direction: -1 | 1) {
@@ -66,26 +69,28 @@ export default function EventFilter({ counts, children }: EventFilterProps) {
         <p role="status" className="text-sm text-muted">
           {counts[filter]} {counts[filter] === 1 ? "Event" : "Events"}
         </p>
-        <div role="group" aria-label="Eventliste verschieben" className="flex shrink-0 gap-2">
-          <button
-            type="button"
-            aria-label="Vorherige Events"
-            title="Vorherige Events"
-            onClick={() => scrollEvents(-1)}
-            className="grid size-10 place-items-center rounded-full border border-line bg-card text-foreground transition-colors hover:border-brand-green hover:bg-brand-green hover:text-white"
-          >
-            <ChevronLeft aria-hidden="true" className="size-4" />
-          </button>
-          <button
-            type="button"
-            aria-label="Nächste Events"
-            title="Nächste Events"
-            onClick={() => scrollEvents(1)}
-            className="grid size-10 place-items-center rounded-full border border-line bg-card text-foreground transition-colors hover:border-brand-green hover:bg-brand-green hover:text-white"
-          >
-            <ChevronRight aria-hidden="true" className="size-4" />
-          </button>
-        </div>
+        {layout === "timeline" && (
+          <div role="group" aria-label="Eventliste verschieben" className="flex shrink-0 gap-2">
+            <button
+              type="button"
+              aria-label="Vorherige Events"
+              title="Vorherige Events"
+              onClick={() => scrollEvents(-1)}
+              className="grid size-10 place-items-center rounded-full border border-line bg-card text-foreground transition-colors hover:border-brand-green hover:bg-brand-green hover:text-white"
+            >
+              <ChevronLeft aria-hidden="true" className="size-4" />
+            </button>
+            <button
+              type="button"
+              aria-label="Nächste Events"
+              title="Nächste Events"
+              onClick={() => scrollEvents(1)}
+              className="grid size-10 place-items-center rounded-full border border-line bg-card text-foreground transition-colors hover:border-brand-green hover:bg-brand-green hover:text-white"
+            >
+              <ChevronRight aria-hidden="true" className="size-4" />
+            </button>
+          </div>
+        )}
       </div>
       <div ref={wrapperRef} data-filter={filter} className="event-filter">
         {children}
