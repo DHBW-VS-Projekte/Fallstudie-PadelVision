@@ -18,7 +18,6 @@ const links = [
 export default function HomeNavbar() {
   const pathname = usePathname();
   const currentPath = pathname.replace(/\/+$/, "") || "/";
-  const currentPath = pathname.replace(/\/+$/, "") || "/";
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
