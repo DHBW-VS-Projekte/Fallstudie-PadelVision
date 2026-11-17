@@ -3,7 +3,7 @@ import HomeNavbar from "@/components/layout/HomeNavbar";
 import LogoMark from "@/components/layout/LogoMark";
 import PadelEntryLink from "@/components/layout/PadelEntryLink";
 
-const bookingPath = "/booking";
+const bookingPath = "/buchung";
 const clubPath = "/about";
 const courtsPath = "/courts";
 const eventsPath = "/events";

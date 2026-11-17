@@ -6,6 +6,7 @@
  * eine Client-Insel. Scroll-Snap sorgt dafür, dass die Leiste beim Wischen
  * sauber an einer Karte einrastet (snap-x snap-mandatory + snap-start).
  */
+import Link from "next/link";
 import SectionHeading from "@/components/ui/SectionHeading";
 import EventFilter, { type EventFilterValue } from "@/components/courts/EventFilter";
 import { eventTypeLabels, eventsSection, levelLabels, locations } from "@/components/courts/courtsContent";
@@ -60,6 +61,9 @@ export default function EventsTimeline() {
                       <p className={`mt-auto pt-4 text-sm font-medium ${e.spotsLeft < FEW_SPOTS ? "text-accent" : "text-accent-2"}`}>
                         {spotsLabel(e.spotsLeft)}
                       </p>
+                      <Link href={`/buchung?event=${encodeURIComponent(e.id)}`} className="mt-4 inline-flex min-h-11 items-center justify-center rounded-full bg-accent px-4 text-sm font-semibold text-on-accent shadow-lift transition-transform hover:-translate-y-0.5">
+                        Event buchen
+                      </Link>
                     </li>
                   );
                 })}

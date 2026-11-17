@@ -1,29 +1,6 @@
-/*@import "tailwindcss";
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
-Das ist der "Alte Part"*/
 /* =====================================================================
    globals.css – GEÄNDERT
-   Zweck: Zentrale Design-Tokens (Farben, Schatten, Animationen), Dark Mode,
+   Zweck: Zentrale Design-Tokens (Farben, Schatten, Animationen),
    Reveal-Animationen, Fokus-Stil und Reduced-Motion-Regeln.
    Wird in src/app/layout.tsx importiert und gilt damit für ALLE Seiten.
    Hinweis: In Tailwind v4 gibt es keine tailwind.config.js mehr –
@@ -34,14 +11,9 @@ Das ist der "Alte Part"*/
    Event-Filter, Detail-Crossfade und Reduced-Motion-Ergänzungen.
    ===================================================================== */
 @import "tailwindcss";
-/* Klassenbasierter Dark Mode:
-   Standardmäßig reagiert `dark:` in Tailwind v4 auf die Systemeinstellung.
-   Wir wollen aber einen manuellen Schalter. Diese Zeile sagt Tailwind:
-   "dark:"-Klassen gelten, sobald ein Vorfahre (meist <html>) die Klasse .dark hat.
-   :where() hält die Spezifität bei 0, damit nichts unerwartet überschrieben wird. */
-@custom-variant dark (&:where(.dark, .dark *));
 /* ---------- Farbpalette HELL (mediterran, warm) ---------- */
 :root {
+  color-scheme: light;
   --background: #faf7f2;   /* warmes Off-White / Sand */
   --surface: #f2ece2;      /* leicht abgesetzte Fläche für Abschnitte */
   --card: #fffdf9;         /* Karten, etwas heller als der Hintergrund */
@@ -66,30 +38,6 @@ Das ist der "Alte Part"*/
   --land-side: #c8b597;    /* "Seitenwand" der extrudierten Landplatten */
   --sea: #d3e7e4;          /* Meer, hell */
   --sea-deep: #a7cdca;     /* Meer, tiefer (Verlauf) */
-}
-/* ---------- Farbpalette DUNKEL ---------- */
-.dark {
-  --background: #141a1f;   /* tiefes, warmes Dunkelblau-Anthrazit, kein #000 */
-  --surface: #1b232a;
-  --card: #212a32;
-  --foreground: #f3eee6;   /* warmes Off-White (≈ 15:1) */
-  --muted: #b4aba0;        /* (≈ 8:1) */
-  --accent: #e8825f;       /* gedämpfte, hellere Terrakotta – dunkler Text darauf ≈ 7:1 */
-  --on-accent: #1a1410;
-  --accent-2: #6cc0c0;
-  --olive: #a6b46e;
-  --line: #2e3942;
-  --glass: #4f8f95;
-  --mesh: #7d746b;
-  --court: #24564f;
-  --court-line: #e9e4dc;
-  --shadow-color: 0 0 0;
-  /* NEU (Courts): Karte im Dunkelmodus – Land dunkel-warm, Meer tiefes Petrol */
-  --land: #2b3640;
-  --land-strong: #4a3a33;
-  --land-side: #11171c;
-  --sea: #173540;
-  --sea-deep: #0e222b;
 }
 /* @theme inline: macht die CSS-Variablen als Tailwind-Klassen verfügbar
    (bg-background, text-muted, fill-accent, border-line …).
@@ -174,15 +122,6 @@ html:has([data-padel-nav-visible="true"]) .chapter-nav {
   outline: 3px solid var(--accent);
   outline-offset: 3px;
   border-radius: 0.5rem;
-}
-/* Sanfter Farbübergang NUR während eines Theme-Wechsels.
-   Die Klasse wird von ThemeToggle kurz gesetzt und wieder entfernt –
-   beim ersten Laden animiert dadurch nichts. */
-html.theme-transition,
-html.theme-transition *,
-html.theme-transition *::before,
-html.theme-transition *::after {
-  transition: background-color 300ms ease, color 300ms ease, border-color 300ms ease, fill 300ms ease !important;
 }
 /* Horizontal scrollbare Leisten ohne sichtbare Scrollbar */
 @utility no-scrollbar {

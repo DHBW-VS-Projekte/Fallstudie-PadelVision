@@ -53,6 +53,8 @@ export interface CourtEvent {
   title: string;
   /** ISO-Datum "JJJJ-MM-TT" – sortierbar; Anzeige über formatDate() */
   date: string;
+  time: string;
+  durationMinutes?: number;
   type: EventType;
   level: Level;
   spotsLeft: number;
@@ -92,6 +94,15 @@ export interface FaqItem {
 }
 
 /* ===================== Beschriftungen ===================== */
+
+export function findEventById(id: string | null | undefined): { event: CourtEvent; location: Location } | undefined {
+  if (!id) return undefined;
+  for (const location of locations) {
+    const event = location.events.find((item) => item.id === id);
+    if (event) return { event, location };
+  }
+  return undefined;
+}
 
 export const eventTypeLabels: Record<EventType, string> = {
   turnier: "Turnier",
@@ -135,9 +146,9 @@ export const locations: Location[] = [
     image: { src: "/images/courts/konstanz.jpg", alt: "Padel-Halle mit großen Fenstern und Blick auf den Bodensee", fallback: "sea" },
     tone: "accent-2",
     events: [
-      { id: "kn-1", title: "Bodensee Winter Cup", date: "2026-12-12", type: "turnier", level: "fortgeschritten", spotsLeft: 6, description: "Doppel-Turnier in der Halle – danach Glühwein auf der Seeterrasse." },
-      { id: "kn-2", title: "Einsteigerkurs am Wochenende", date: "2027-01-16", type: "kurs", level: "einsteiger", spotsLeft: 3, description: "Zwei Tage, alle Grundlagen: Griff, Aufschlag, Spiel mit der Wand." },
-      { id: "kn-3", title: "Seeufer Community Night", date: "2027-03-05", type: "community", level: "alle", spotsLeft: 12, description: "Wechselnde Doppel, Musik und neue Mitspieler kennenlernen." },
+      { id: "kn-1", title: "Bodensee Winter Cup", date: "2026-12-12", time: "18:30", durationMinutes: 90, type: "turnier", level: "fortgeschritten", spotsLeft: 6, description: "Doppel-Turnier in der Halle – danach Glühwein auf der Seeterrasse." },
+      { id: "kn-2", title: "Einsteigerkurs am Wochenende", date: "2027-01-16", time: "09:30", durationMinutes: 90, type: "kurs", level: "einsteiger", spotsLeft: 3, description: "Zwei Tage, alle Grundlagen: Griff, Aufschlag, Spiel mit der Wand." },
+      { id: "kn-3", title: "Seeufer Community Night", date: "2027-03-05", time: "19:30", durationMinutes: 90, type: "community", level: "alle", spotsLeft: 12, description: "Wechselnde Doppel, Musik und neue Mitspieler kennenlernen." },
     ],
   },
   {
@@ -165,9 +176,9 @@ export const locations: Location[] = [
     image: { src: "/images/courts/marbella.jpg", alt: "Outdoor-Padel-Courts zwischen Palmen im warmen Abendlicht", fallback: "sun" },
     tone: "accent",
     events: [
-      { id: "mb-1", title: "Costa del Sol Open", date: "2027-02-20", type: "turnier", level: "fortgeschritten", spotsLeft: 4, description: "Unser größtes Turnier im Winter – Finale auf dem Panorama-Court." },
-      { id: "mb-2", title: "Academy Intensiv-Camp", date: "2027-03-22", type: "camp", level: "fortgeschritten", spotsLeft: 8, description: "Fünf Tage Training mit dem Academy-Team: Technik, Taktik, Matchpraxis." },
-      { id: "mb-3", title: "Flutlicht Social Mix", date: "2027-04-10", type: "community", level: "alle", spotsLeft: 16, description: "Abendmatches mit zugelosten Partnern – danach Tapas in der Lounge." },
+      { id: "mb-1", title: "Costa del Sol Open", date: "2027-02-20", time: "18:00", durationMinutes: 90, type: "turnier", level: "fortgeschritten", spotsLeft: 4, description: "Unser größtes Turnier im Winter – Finale auf dem Panorama-Court." },
+      { id: "mb-2", title: "Academy Intensiv-Camp", date: "2027-03-22", time: "10:00", durationMinutes: 90, type: "camp", level: "fortgeschritten", spotsLeft: 8, description: "Fünf Tage Training mit dem Academy-Team: Technik, Taktik, Matchpraxis." },
+      { id: "mb-3", title: "Flutlicht Social Mix", date: "2027-04-10", time: "20:00", durationMinutes: 90, type: "community", level: "alle", spotsLeft: 16, description: "Abendmatches mit zugelosten Partnern – danach Tapas in der Lounge." },
     ],
   },
   {
@@ -189,14 +200,14 @@ export const locations: Location[] = [
       { icon: "terrace", label: "Schattenterrasse" },
       { icon: "yoga", label: "Yoga-Deck" },
     ],
-    hours: "April–Oktober täglich 8–22 Uhr (Saisonbetrieb)",
+    hours: "April–Oktober täglich 8–22 Uhr",
     address: "Route de la Plage 1 (Platzhalter), Porto-Vecchio",
     image: { src: "/images/courts/porto-vecchio.jpg", alt: "Padel-Court zwischen Pinien mit Blick aufs türkise Meer", fallback: "olive" },
     tone: "olive",
     events: [
-      { id: "pv-1", title: "Corsica Padel Camp", date: "2027-04-26", type: "camp", level: "alle", spotsLeft: 10, description: "Eine Woche Padel, Yoga am Morgen und Strand am Nachmittag." },
-      { id: "pv-2", title: "Pinienwald Doubles", date: "2027-05-22", type: "turnier", level: "alle", spotsLeft: 2, description: "Lockeres Doppel-Turnier im Schatten der Pinien." },
-      { id: "pv-3", title: "Sunrise Einsteigerkurs", date: "2027-06-12", type: "kurs", level: "einsteiger", spotsLeft: 6, description: "Grundlagenkurs am frühen Morgen, bevor es heiß wird." },
+      { id: "pv-1", title: "Corsica Padel Camp", date: "2027-04-26", time: "09:00", durationMinutes: 90, type: "camp", level: "alle", spotsLeft: 10, description: "Eine Woche Padel, Yoga am Morgen und Strand am Nachmittag." },
+      { id: "pv-2", title: "Pinienwald Doubles", date: "2027-05-22", time: "17:30", durationMinutes: 90, type: "turnier", level: "alle", spotsLeft: 2, description: "Lockeres Doppel-Turnier im Schatten der Pinien." },
+      { id: "pv-3", title: "Sunrise Einsteigerkurs", date: "2027-06-12", time: "07:30", durationMinutes: 90, type: "kurs", level: "einsteiger", spotsLeft: 6, description: "Grundlagenkurs am frühen Morgen, bevor es heiß wird." },
     ],
   },
   {
@@ -224,8 +235,8 @@ export const locations: Location[] = [
     image: { src: "/images/courts/santorini.jpg", alt: "Padel-Court zwischen weißen Häusern im Sonnenuntergang", fallback: "dusk" },
     tone: "glass",
     events: [
-      { id: "st-1", title: "Sunset Mixed Doubles", date: "2027-05-15", type: "turnier", level: "alle", spotsLeft: 7, description: "Mixed-Turnier, das genau zum Sonnenuntergang ins Finale geht." },
-      { id: "st-2", title: "Caldera Sunset Session", date: "2027-06-26", type: "community", level: "alle", spotsLeft: 14, description: "Freies Spiel bis die Sonne weg ist – danach Rooftop-Bar." },
+      { id: "st-1", title: "Sunset Mixed Doubles", date: "2027-05-15", time: "20:30", durationMinutes: 90, type: "turnier", level: "alle", spotsLeft: 7, description: "Mixed-Turnier, das genau zum Sonnenuntergang ins Finale geht." },
+      { id: "st-2", title: "Caldera Sunset Session", date: "2027-06-26", time: "19:00", durationMinutes: 90, type: "community", level: "alle", spotsLeft: 14, description: "Freies Spiel bis die Sonne weg ist – danach Rooftop-Bar." },
     ],
   },
   {
@@ -253,9 +264,9 @@ export const locations: Location[] = [
     image: { src: "/images/courts/chania.jpg", alt: "Padel-Court mit Blick auf Olivenhaine und den alten Hafen", fallback: "terra" },
     tone: "mesh",
     events: [
-      { id: "ch-1", title: "Kreta Family Day", date: "2027-03-21", type: "community", level: "alle", spotsLeft: 20, description: "Ein Tag für die ganze Familie: Mini-Matches, Taverna und Spiele." },
-      { id: "ch-2", title: "Kinder-Schnupperkurs", date: "2027-04-17", type: "kurs", level: "einsteiger", spotsLeft: 4, description: "Spielerischer Einstieg für Kinder und Jugendliche." },
-      { id: "ch-3", title: "Hafen Cup Chania", date: "2027-06-05", type: "turnier", level: "fortgeschritten", spotsLeft: 9, description: "Doppel-Turnier mit Siegerehrung am venezianischen Hafen." },
+      { id: "ch-1", title: "Kreta Family Day", date: "2027-03-21", time: "11:00", durationMinutes: 90, type: "community", level: "alle", spotsLeft: 20, description: "Ein Tag für die ganze Familie: Mini-Matches, Taverna und Spiele." },
+      { id: "ch-2", title: "Kinder-Schnupperkurs", date: "2027-04-17", time: "15:00", durationMinutes: 90, type: "kurs", level: "einsteiger", spotsLeft: 4, description: "Spielerischer Einstieg für Kinder und Jugendliche." },
+      { id: "ch-3", title: "Hafen Cup Chania", date: "2027-06-05", time: "17:00", durationMinutes: 90, type: "turnier", level: "fortgeschritten", spotsLeft: 9, description: "Doppel-Turnier mit Siegerehrung am venezianischen Hafen." },
     ],
   },
 ];
@@ -332,7 +343,7 @@ export const faqSection = {
   title: "Fragen zu unseren Standorten",
   items: [
     { question: "Kann ich an jedem Standort Schläger leihen?", answer: "Ja. An allen fünf Standorten kannst du Schläger und Bälle ausleihen – du musst also nichts mitbringen außer Sportkleidung und passenden Schuhen." },
-    { question: "Sind die Outdoor-Courts im Winter geöffnet?", answer: "Konstanz, Marbella, Santorini und Chania haben laut Öffnungszeiten täglich geöffnet. Porto-Vecchio ist ein Saisonbetrieb und nur von April bis Oktober offen. Wenn du wetterunabhängig spielen willst, sind die Indoor-Courts in Konstanz, Marbella, Santorini und Chania die sichere Wahl." },
+    { question: "Sind die Outdoor-Courts im Winter geöffnet?", answer: "Konstanz, Marbella, Santorini und Chania haben täglich geöffnet. Porto-Vecchio ist ein Saisonbetrieb und nur von April bis Oktober offen. Wenn du wetterunabhängig spielen willst, sind die Indoor-Courts in Konstanz, Marbella, Santorini und Chania die sichere Wahl." },
     { question: "Kann ich ein Event an einem anderen Standort besuchen?", answer: "Klar. Alle Events stehen dir offen – egal, an welchem Standort du sonst spielst. Achte nur auf das angegebene Level und die freien Plätze." },
     { question: "Wie buche ich einen Court?", answer: "Wähle deinen Standort und klicke auf „Court buchen“. Du landest auf der Buchungsseite, der gewählte Standort wird dabei direkt mitgegeben." },
   ] satisfies FaqItem[],

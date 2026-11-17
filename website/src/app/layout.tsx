@@ -23,32 +23,14 @@ export const metadata: Metadata = {
     "PadelVision verbindet Padel, Sport und Community. Entdecke unsere Courts, Events und Angebote.",
 };
 
-const themeScript = `
-(function () {
-  var root = document.documentElement;
-  root.classList.add('js');
-  try {
-    var stored = localStorage.getItem('padelvision-theme');
-    var dark = stored === 'dark' || (stored !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    root.classList.toggle('dark', dark);
-    root.style.colorScheme = dark ? 'dark' : 'light';
-  } catch (e) {}
-})();
-`;
-
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="de"
-      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-      </head>
-
       <body className="min-h-full bg-background font-sans text-foreground">
         {children}
       </body>

@@ -132,7 +132,7 @@ export default function Hero() {
           </a>
 
           <Link
-            href="/booking"
+            href="/buchung"
             className="
               inline-flex min-h-12 items-center
               rounded-full border border-hero-ink/40

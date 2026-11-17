@@ -217,7 +217,7 @@ export const equipment = {
 /* ===================== Aufschlag ===================== */
 
 export const serve = {
-  title: "Der Aufschlag – von unten, diagonal, entspannt.",
+  title: "Der Aufschlag – von unten, diagonal.",
   lead: "Anders als im Tennis gibt es beim Padel keinen harten Überkopf-Aufschlag. Das macht den Einstieg leicht.",
   steps: [
     { icon: "arrowDown", text: "Der Aufschlag erfolgt von unten." },

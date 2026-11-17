@@ -17,6 +17,7 @@ const links = [
 
 export default function HomeNavbar() {
   const pathname = usePathname();
+  const currentPath = pathname.replace(/\/+$/, "") || "/";
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -35,7 +36,7 @@ export default function HomeNavbar() {
             aria-label="Hauptnavigation"
           >
             {links.map((link) => {
-              const active = pathname === link.href;
+              const active = currentPath === link.href;
               const className = active ? "pv-current" : undefined;
               if (link.href === "/padel") {
                 return (
@@ -62,7 +63,7 @@ export default function HomeNavbar() {
               );
             })}
           </nav>
-          <Link className="pv-btn pv-btn-dark pv-nav-cta" href="/booking">
+          <Link className="pv-btn pv-btn-dark pv-nav-cta" href="/buchung">
             Court buchen <span aria-hidden="true">↗</span>
           </Link>
           <button
