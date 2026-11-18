@@ -27,6 +27,10 @@ function pv_db(): PDO
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES => false,
             PDO::ATTR_TIMEOUT => 5,
+
+            // Hetzner MySQL – verschlüsselte SSL-Verbindung
+            PDO::MYSQL_ATTR_SSL_CA => '/usr/home/xfmnhy/sqlca.pem',
+            PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => true,
         ]);
         $pdo->exec("SET time_zone = '+00:00'");
         $pdo->exec('SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED');
