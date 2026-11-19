@@ -408,8 +408,9 @@ function pv_confirm_event_booking(PDO $pdo, array $body, string $eventId, array 
                         pv_generate_code(), $courtId, $eventId, $title, $type, pv_db_time($start), pv_db_time($end),
                         $name, $email, $emailNorm, $rackets, $balls, $idem, pv_device_id(), pv_db_time_ms($now),
                     ]);
+                    $bookingId = (int) $pdo->lastInsertId();
                     pv_bump_version($pdo);
-                    return (int) $pdo->lastInsertId();
+                    return $bookingId;
                 } catch (PDOException $e) {
                     if (pv_mysql_error_code($e) === 1062 && str_contains($e->getMessage(), 'uq_booking_code')) {
                         continue;
