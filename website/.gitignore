@@ -44,3 +44,13 @@ next-env.d.ts
 /website/node_modules/
 /website/.next/
 /website/out/
+
+# PHP configuration files (sensitive credentials)
+/api/config.php
+/api/config.local.php
+
+# Local PHP logs
+/php.log
+
+# Generated deployment files
+/upload/
