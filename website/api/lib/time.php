@@ -128,10 +128,10 @@ function pv_weekday_short(string $date): string
     return ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'][$n - 1];
 }
 
-/** "Sa 14.03." */
+/** "Sa 14.03.2027" */
 function pv_date_short(string $date): string
 {
-    return pv_weekday_short($date) . ' ' . (new DateTimeImmutable($date . ' 12:00:00', new DateTimeZone('UTC')))->format('d.m.');
+    return pv_weekday_short($date) . ' ' . (new DateTimeImmutable($date . ' 12:00:00', new DateTimeZone('UTC')))->format('d.m.Y');
 }
 
 /** "Samstag, 14.03.2027" */

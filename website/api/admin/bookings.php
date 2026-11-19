@@ -38,7 +38,7 @@ foreach ($rows as $row) {
         'priceCents' => (int) $row['price_cents'],
         'createdAt' => $p['createdAt'],
         // "gebucht am" in deutscher Zeit mit Sekunden
-        'createdLabel' => pv_from_db((string) $row['created_at'])->setTimezone($berlin)->format('d.m. H:i:s'),
+        'createdLabel' => pv_from_db((string) $row['created_at'])->setTimezone($berlin)->format('d.m.Y H:i:s'),
     ];
 }
 pv_ok(['bookings' => $out, 'version' => pv_current_version($pdo)]);

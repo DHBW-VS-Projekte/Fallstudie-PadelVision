@@ -23,9 +23,9 @@ export function formatDateLong(date: string): string {
   return new Intl.DateTimeFormat("de-DE", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(utcNoon(date));
 }
 
-/** "2027-03-14" → "So., 14. März" */
+/** "2027-03-14" → "So., 14. März 2027" */
 export function formatDateMedium(date: string): string {
-  return new Intl.DateTimeFormat("de-DE", { weekday: "short", day: "numeric", month: "long", timeZone: "UTC" }).format(utcNoon(date));
+  return new Intl.DateTimeFormat("de-DE", { weekday: "short", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(utcNoon(date));
 }
 
 /** Millisekunden → "4:59" (nie negativ) */

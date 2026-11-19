@@ -33,10 +33,23 @@ foreach ($stmt as $row) {
     $map[(string) $row['court_id']][(string) $row['cell_start']] = $row;
 }
 
+$eventStmt = $pdo->prepare(
+    "SELECT event_id, event_title, starts_at, ends_at, COUNT(*) AS registrations
+       FROM bookings
+      WHERE booking_type = 'event' AND status = 'confirmed'
+        AND court_id IN ($in) AND starts_at < ? AND ends_at > ?
+      GROUP BY event_id, event_title, starts_at, ends_at
+      ORDER BY starts_at, event_title"
+);
+$eventStmt->execute([...$ids, pv_db_time($to), pv_db_time($from)]);
+$events = $eventStmt->fetchAll();
+
 [$openMin, $closeMin] = pv_opening_minutes($location);
 $rows = [];
 for ($m = $openMin; $m < $closeMin; $m += pv_rules()['cellMinutes']) {
     $key = pv_db_time(pv_local_to_utc($date, $m, $tz));
+    $cellStart = pv_from_db($key);
+    $cellEnd = $cellStart->modify('+' . pv_rules()['cellMinutes'] . ' minutes');
     $cells = [];
     foreach ($location['courts'] as $court) {
         $row = $map[$court['id']][$key] ?? null;
@@ -56,7 +69,20 @@ for ($m = $openMin; $m < $closeMin; $m += pv_rules()['cellMinutes']) {
             $cells[] = null;
         }
     }
-    $rows[] = ['time' => pv_minutes_to_hhmm($m), 'cells' => $cells];
+    $rowEvents = [];
+    foreach ($events as $event) {
+        $eventStart = pv_from_db((string) $event['starts_at']);
+        $eventEnd = pv_from_db((string) $event['ends_at']);
+        if ($eventStart < $cellEnd && $eventEnd > $cellStart) {
+            $rowEvents[] = [
+                'id' => (string) $event['event_id'],
+                'title' => (string) $event['event_title'],
+                'registrations' => (int) $event['registrations'],
+                'startsHere' => $eventStart >= $cellStart && $eventStart < $cellEnd,
+            ];
+        }
+    }
+    $rows[] = ['time' => pv_minutes_to_hhmm($m), 'cells' => $cells, 'events' => $rowEvents];
 }
 [$open, $reason] = pv_day_open($location, $date);
 pv_ok([

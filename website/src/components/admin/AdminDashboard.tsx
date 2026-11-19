@@ -153,7 +153,10 @@ export default function AdminDashboard({ onLoggedOut }: { onLoggedOut: () => voi
               </label>
             </div>
           </div>
-          <OccupancyGrid data={occupancy && occupancy.location === location && occupancy.date === date ? occupancy : null} />
+          <OccupancyGrid
+            data={occupancy && occupancy.location === location && occupancy.date === date ? occupancy : null}
+            bookings={bookings}
+          />
         </section>
         <LiveFeed bookings={bookings} />
       </div>
