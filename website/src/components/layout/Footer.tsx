@@ -6,6 +6,8 @@ const navigation = [
   { href: "/", label: "Home" },
   { href: "/courts", label: "Courts" },
   { href: "/padel", label: "Padel entdecken" },
+  { href: "/community", label: "Community" },
+  { href: "/events", label: "Events" },
   { href: "/about", label: "About" },
 ];
 

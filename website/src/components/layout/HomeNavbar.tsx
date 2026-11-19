@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import LogoMark from "@/components/layout/LogoMark";
-import PadelEntryLink from "@/components/layout/PadelEntryLink";
 
 const links = [
   { href: "/", label: "Home" },
@@ -38,18 +37,6 @@ export default function HomeNavbar() {
             {links.map((link) => {
               const active = currentPath === link.href;
               const className = active ? "pv-current" : undefined;
-              if (link.href === "/padel") {
-                return (
-                  <PadelEntryLink
-                    key={link.href}
-                    aria-current={active ? "page" : undefined}
-                    className={className}
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    {link.label}
-                  </PadelEntryLink>
-                );
-              }
               return (
                 <Link
                   key={link.href}

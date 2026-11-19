@@ -6,7 +6,6 @@
 import type { Metadata } from "next";
 import Footer from "@/components/layout/Footer";
 import HomeNavbar from "@/components/layout/HomeNavbar";
-import PadelEntryScroll from "@/components/padel/PadelEntryScroll";
 import Hero from "@/components/padel/Hero";
 import ChapterNav from "@/components/padel/ChapterNav";
 import WhatIsPadel from "@/components/padel/WhatIsPadel";
@@ -32,7 +31,6 @@ export default function PadelPage() {
   return (
     <>
       <HomeNavbar />
-      <PadelEntryScroll />
       {/* ===== Abschnitt: Hero ===== */}
       <Hero />
       {/* ===== Klebende Kapitelnavigation ===== */}
