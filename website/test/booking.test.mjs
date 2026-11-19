@@ -24,6 +24,7 @@ test("Formatierung: Euro", () => {
 
 test("Formatierung: Datum ohne Zeitzonen-Verrutschen", () => {
   assert.equal(format.formatDateLong("2027-03-14"), "Sonntag, 14. März 2027");
+  assert.equal(format.formatDateMedium("2027-03-14"), "So., 14. März 2027");
   assert.equal(format.addDays("2027-03-31", 1), "2027-04-01");
   assert.equal(format.addDays("2027-12-31", 1), "2028-01-01");
 });

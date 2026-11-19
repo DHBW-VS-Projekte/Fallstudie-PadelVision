@@ -68,6 +68,7 @@ export default function DateStep({ courtId, selected, onSelect }: DateStepProps)
                 <span className="text-xs font-semibold uppercase tracking-[0.15em]">{d.weekday}</span>
                 <span className="mt-1 text-3xl font-semibold leading-none tracking-tight">{d.day}</span>
                 <span className="mt-1 text-xs">{d.month}</span>
+                <span className={`text-[10px] ${active ? "text-on-accent/70" : "text-muted"}`}>{d.date.slice(0, 4)}</span>
                 {/* Auslastungs-Indikator: Anteil freier Startzeiten (scaleX statt Breite → keine Layout-Neuberechnung) */}
                 <span aria-hidden="true" className={`mt-3 block h-1.5 w-full overflow-hidden rounded-full ${active ? "bg-on-accent/25" : "bg-surface"}`}>
                   <span className={`block h-full origin-left rounded-full ${active ? "bg-on-accent" : "bg-accent-2"}`} style={{ transform: `scaleX(${ratio})` }} />

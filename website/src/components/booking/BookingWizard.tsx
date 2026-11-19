@@ -44,6 +44,7 @@ export default function BookingWizard() {
   const [state, dispatch] = useReducer(wizardReducer, params, (p) => initialState((key) => p.get(key)));
   const now = useNow();
   const [submitting, setSubmitting] = useState(false);
+  const submittingRef = useRef(false);
   const [bookError, setBookError] = useState<string | null>(null);
   const [fieldError, setFieldError] = useState<{ field: string; message: string } | null>(null);
   const [announcement, setAnnouncement] = useState("");
@@ -102,7 +103,8 @@ export default function BookingWizard() {
   }, [state.step]);
 
   async function book() {
-    if (!state.hold || !state.idempotencyKey || submitting) return;
+    if (!state.hold || !state.idempotencyKey || submittingRef.current) return;
+    submittingRef.current = true;
     setSubmitting(true);
     setBookError(null);
     try {
@@ -138,6 +140,7 @@ export default function BookingWizard() {
         setBookError(errorMessage(err.code, err.message));
       }
     } finally {
+      submittingRef.current = false;
       setSubmitting(false);
     }
   }

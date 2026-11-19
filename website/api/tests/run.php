@@ -60,6 +60,7 @@ T::check('Konstanz 18:00 im Juli = 16:00 UTC', pv_db_time(pv_local_to_utc('2027-
 T::check('Umstellungstag 28.03.2027: 07:00 = 05:00 UTC', pv_db_time(pv_local_to_utc('2027-03-28', 420, $berlin)) === '2027-03-28 05:00:00');
 T::check('Vortag 27.03.2027: 07:00 = 06:00 UTC', pv_db_time(pv_local_to_utc('2027-03-27', 420, $berlin)) === '2027-03-27 06:00:00');
 T::check('Santorini 18:00 im März = 16:00 UTC', pv_db_time(pv_local_to_utc('2027-03-14', 1080, pv_tz('Europe/Athens'))) === '2027-03-14 16:00:00');
+T::check('Kurzes Datum enthält das Jahr', pv_date_short('2027-03-14') === 'So 14.03.2027');
 T::check('Zeitzonen-Hinweis Santorini +1 Std.', str_contains(pv_tz_label('Santorini', pv_tz('Europe/Athens'), '2027-03-14'), '+1 Std.'));
 T::check('Zeitzonen-Hinweis Konstanz', str_contains(pv_tz_label('Konstanz', $berlin, '2027-03-14'), 'wie deutsche Zeit'));
 T::check('24:00 Marbella = 23:00 UTC (Winter)', pv_db_time(pv_local_to_utc('2027-03-14', 1440, pv_tz('Europe/Madrid'))) === '2027-03-14 23:00:00');

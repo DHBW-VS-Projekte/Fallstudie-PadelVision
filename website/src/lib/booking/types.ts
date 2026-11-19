@@ -245,6 +245,13 @@ export type OccupancyCell =
   | { type: "hold" }
   | { type: "booked"; bookingId: number; name: string; code: string; startsHere: boolean };
 
+export interface OccupancyEvent {
+  id: string;
+  title: string;
+  registrations: number;
+  startsHere: boolean;
+}
+
 export interface OccupancyResponse {
   location: string;
   date: string;
@@ -252,5 +259,5 @@ export interface OccupancyResponse {
   reason: string | null;
   timezoneLabel: string;
   courts: { id: string; name: string }[];
-  rows: { time: string; cells: OccupancyCell[] }[];
+  rows: { time: string; cells: OccupancyCell[]; events?: OccupancyEvent[] }[];
 }
