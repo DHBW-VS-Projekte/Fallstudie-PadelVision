@@ -104,6 +104,7 @@ body {
    zum oberen Rand ein – so verschwinden Überschriften nicht unter der fixen
    Navbar (≈ 4rem) und der klebenden Kapitelnavigation (≈ 3.5rem). */
 section[id] { scroll-margin-top: 8.5rem; }
+.chapter-nav ~ section[id] { scroll-margin-top: 0; }
 html:has([data-padel-nav-visible="true"]) .chapter-nav {
   top: 4rem;
 }
@@ -117,6 +118,9 @@ html:has([data-padel-nav-visible="true"]) .chapter-nav {
 @media (max-width: 800px) {
   .chapter-nav {
     top: 73px;
+  }
+  .chapter-nav ~ section[id] {
+    scroll-margin-top: 73px;
   }
 }
 /* Einheitlicher, gut sichtbarer Tastatur-Fokus (nur bei Tastaturbedienung) */

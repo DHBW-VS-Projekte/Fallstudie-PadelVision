@@ -13,10 +13,10 @@ import { eyebrowFor, faq } from "@/components/padel/padelContent";
 
 export default function FaqSection() {
   return (
-    <section id="faq" aria-labelledby="faq-title" className="py-24 lg:py-36">
+    <section id="faq" aria-labelledby="faq-title" className="py-16 lg:py-20">
       <div className="mx-auto max-w-3xl px-5 sm:px-8">
         <SectionHeading id="faq-title" eyebrow={eyebrowFor("faq")} title={faq.title} align="center" />
-        <div className="mt-12 space-y-3">
+        <div className="mt-10 space-y-3">
           {faq.items.map((item, i) => (
             <Reveal key={item.question} delay={i * 70}>
               {/* group-open: Tailwind-Variante, wenn das <details> offen ist → Chevron dreht sich */}

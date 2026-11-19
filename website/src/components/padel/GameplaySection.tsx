@@ -11,9 +11,9 @@ import { eyebrowFor, gameplay, images } from "@/components/padel/padelContent";
 
 export default function GameplaySection() {
   return (
-    <section id="spielablauf" aria-labelledby="spielablauf-title" className="bg-surface py-24 lg:py-36">
+    <section id="spielablauf" aria-labelledby="spielablauf-title" className="bg-surface py-16 lg:py-20">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+        <div className="grid gap-12 lg:grid-cols-2 lg:items-start">
           <ImageReveal image={images.wallPlay} sizes="(min-width: 1024px) 50vw, 100vw" className="order-last aspect-[4/5] lg:order-first" />
           <div>
             <SectionHeading id="spielablauf-title" eyebrow={eyebrowFor("spielablauf")} title={gameplay.title} lead={gameplay.lead} />
@@ -27,7 +27,7 @@ export default function GameplaySection() {
             </ul>
           </div>
         </div>
-        <div className="mt-16"><WallPlayDiagram steps={gameplay.steps} /></div>
+        <div className="mt-12"><WallPlayDiagram steps={gameplay.steps} /></div>
       </div>
     </section>
   );

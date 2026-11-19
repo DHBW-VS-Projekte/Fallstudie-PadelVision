@@ -11,7 +11,7 @@ import { finalCta, images } from "@/components/padel/padelContent";
 export default function FinalCta() {
   return (
     <section aria-labelledby="cta-title" className="px-3 pb-3 sm:px-5 sm:pb-5">
-      <div className="relative isolate overflow-hidden rounded-[2rem] px-6 py-28 text-center text-hero-ink sm:py-40">
+      <div className="relative isolate overflow-hidden rounded-[2rem] px-6 py-20 text-center text-hero-ink sm:py-28">
         <ImageReveal image={images.community} sizes="100vw" reveal={false} framed={false} className="absolute inset-0 -z-20" />
         <div aria-hidden="true" className="absolute inset-0 -z-10 bg-hero-shade/60" />
         <Reveal>

@@ -11,13 +11,13 @@ import { iconMap } from "@/components/padel/icons";
 
 export default function WhatIsPadel() {
   return (
-    <section id="was-ist-padel" aria-labelledby="was-ist-padel-title" className="relative isolate overflow-hidden py-24 lg:py-36">
+    <section id="was-ist-padel" aria-labelledby="was-ist-padel-title" className="relative isolate overflow-hidden pt-16 pb-4 lg:pt-20 lg:pb-6">
       <FloatingShapes variant="a" />
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <SectionHeading id="was-ist-padel-title" eyebrow={eyebrowFor("was-ist-padel")} title={whatIsPadel.title} lead={whatIsPadel.lead} />
 
         {/* ===== Fakten-Karten, gestaffelt eingeblendet ===== */}
-        <ul className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {whatIsPadel.facts.map((fact, i) => {
             const Icon = iconMap[fact.icon];
             return (
@@ -39,7 +39,7 @@ export default function WhatIsPadel() {
           })}
         </ul>
 
-        <ImageReveal image={images.doubles} sizes="(min-width: 1280px) 1216px, 100vw" className="mt-16 aspect-[4/3] sm:aspect-[16/9]" />
+        <ImageReveal image={images.doubles} sizes="(min-width: 1280px) 1216px, 100vw" className="mt-6 aspect-[4/3] max-h-56 sm:aspect-[16/9] sm:max-h-64" />
       </div>
     </section>
   );

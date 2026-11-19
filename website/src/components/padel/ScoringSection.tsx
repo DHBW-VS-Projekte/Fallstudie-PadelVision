@@ -10,12 +10,12 @@ import { eyebrowFor, scoring } from "@/components/padel/padelContent";
 
 export default function ScoringSection() {
   return (
-    <section id="zaehlweise" aria-labelledby="zaehlweise-title" className="relative isolate overflow-hidden py-24 lg:py-36">
+    <section id="zaehlweise" aria-labelledby="zaehlweise-title" className="relative isolate overflow-hidden py-16 lg:py-20">
       <FloatingShapes variant="a" />
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <SectionHeading id="zaehlweise-title" eyebrow={eyebrowFor("zaehlweise")} title={scoring.title} lead={scoring.lead} />
 
-        <div className="mt-14 grid gap-12 lg:grid-cols-2 lg:items-start">
+        <div className="mt-12 grid gap-12 lg:grid-cols-2 lg:items-start">
           <div>
             <Reveal><p className="text-lg font-medium">{scoring.deuceIntro}</p></Reveal>
             <ul className="mt-6 space-y-4">

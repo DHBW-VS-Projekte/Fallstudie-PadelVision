@@ -11,11 +11,11 @@ import { iconMap } from "@/components/padel/icons";
 
 export default function ServeSection() {
   return (
-    <section id="aufschlag" aria-labelledby="aufschlag-title" className="py-24 lg:py-36">
+    <section id="aufschlag" aria-labelledby="aufschlag-title" className="py-16 lg:py-20">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <SectionHeading id="aufschlag-title" eyebrow={eyebrowFor("aufschlag")} title={serve.title} lead={serve.lead} />
 
-        <div className="mt-14 grid gap-12 lg:grid-cols-2">
+        <div className="mt-12 grid gap-12 lg:grid-cols-2">
           <ol className="space-y-4">
             {serve.steps.map((step, i) => {
               const Icon = iconMap[step.icon];

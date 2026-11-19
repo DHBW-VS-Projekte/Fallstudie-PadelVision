@@ -12,9 +12,9 @@ import { iconMap } from "@/components/padel/icons";
 
 export default function Equipment() {
   return (
-    <section id="ausruestung" aria-labelledby="ausruestung-title" className="relative isolate overflow-hidden bg-surface py-24 lg:py-36">
+    <section id="ausruestung" aria-labelledby="ausruestung-title" className="relative isolate overflow-hidden bg-surface py-16 lg:py-20">
       <FloatingShapes variant="b" />
-      <div className="mx-auto grid max-w-7xl gap-14 px-5 sm:px-8 lg:grid-cols-[1fr_1.3fr] lg:items-center">
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-[1fr_1.3fr] lg:items-center">
         <div>
           <SectionHeading id="ausruestung-title" eyebrow={eyebrowFor("ausruestung")} title={equipment.title} lead={equipment.lead} />
           <ImageReveal image={images.equipment} sizes="(min-width: 1024px) 40vw, 100vw" className="mt-10 aspect-square" />

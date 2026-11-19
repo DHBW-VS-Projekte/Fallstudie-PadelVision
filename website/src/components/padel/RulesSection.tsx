@@ -10,11 +10,11 @@ import { eyebrowFor, rules } from "@/components/padel/padelContent";
 
 export default function RulesSection() {
   return (
-    <section id="regeln" aria-labelledby="regeln-title" className="bg-surface py-24 lg:py-36">
+    <section id="regeln" aria-labelledby="regeln-title" className="bg-surface py-16 lg:py-20">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <SectionHeading id="regeln-title" eyebrow={eyebrowFor("regeln")} title={rules.title} lead={rules.lead} />
-        <Reveal className="mt-12"><RulesTabs categories={rules.categories} /></Reveal>
-        <Reveal delay={200} className="interactive-card mt-10 flex gap-4 rounded-3xl bg-olive/15 p-7">
+        <Reveal className="mt-10"><RulesTabs categories={rules.categories} /></Reveal>
+        <Reveal delay={200} className="interactive-card mt-8 flex gap-4 rounded-3xl bg-olive/15 p-7">
           <Lightbulb aria-hidden="true" className="size-7 shrink-0 text-olive" />
           <div>
             <h3 className="font-semibold">Profi-Tipp</h3>

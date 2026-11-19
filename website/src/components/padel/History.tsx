@@ -10,16 +10,16 @@ import { eyebrowFor, history, images } from "@/components/padel/padelContent";
 
 export default function History() {
   return (
-    <section id="geschichte" aria-labelledby="geschichte-title" className="bg-surface py-24 lg:py-36">
+    <section id="geschichte" aria-labelledby="geschichte-title" className="bg-surface pt-16 pb-16 lg:pt-20 lg:pb-20">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <div className="grid items-end gap-10 lg:grid-cols-[1.2fr_1fr]">
+        <div className="grid items-start gap-10 lg:grid-cols-[1.2fr_1fr]">
           <SectionHeading id="geschichte-title" eyebrow={eyebrowFor("geschichte")} title={history.title} lead={history.lead} />
-          <ImageReveal image={images.history} sizes="(min-width: 1024px) 40vw, 100vw" className="aspect-[4/5] max-h-[28rem] w-full lg:max-h-none" />
+          <ImageReveal image={images.history} sizes="(min-width: 1024px) 40vw, 100vw" className="aspect-[4/5] max-h-64 w-full" />
         </div>
 
-        <div className="mt-20">
+        <div className="mt-12 md:mt-14">
           <TimelineTrack>
-            <ol className="space-y-12 md:space-y-16">
+            <ol className="space-y-8 md:space-y-12">
               {history.entries.map((entry, i) => {
                 const right = i % 2 === 1; // Desktop: abwechselnd links/rechts
                 return (

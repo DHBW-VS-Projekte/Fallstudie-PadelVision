@@ -12,15 +12,15 @@ import { court, eyebrowFor, images } from "@/components/padel/padelContent";
 export default function CourtSection() {
   const icons = [Building2, Sun];
   return (
-    <section id="court" aria-labelledby="court-title" className="py-24 lg:py-36">
+    <section id="court" aria-labelledby="court-title" className="py-16 lg:py-20">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <SectionHeading id="court-title" eyebrow={eyebrowFor("court")} title={court.title} lead={court.lead} />
         <Reveal><p className="mt-4 max-w-prose leading-relaxed text-muted">{court.detail}</p></Reveal>
 
-        <Reveal className="mt-14"><CourtDiagram /></Reveal>
+        <Reveal className="mt-10"><CourtDiagram /></Reveal>
 
         {/* ===== Indoor vs. Outdoor + Bild ===== */}
-        <div className="mt-20 grid items-center gap-10 lg:grid-cols-2">
+        <div className="mt-14 grid items-center gap-10 lg:grid-cols-2">
           <ImageReveal image={images.court} sizes="(min-width: 1024px) 50vw, 100vw" className="aspect-[16/10]" />
           <div>
             <div className="grid gap-5 sm:grid-cols-2">
