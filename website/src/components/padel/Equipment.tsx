@@ -17,7 +17,7 @@ export default function Equipment() {
       <div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-[1fr_1.3fr] lg:items-center">
         <div>
           <SectionHeading id="ausruestung-title" eyebrow={eyebrowFor("ausruestung")} title={equipment.title} lead={equipment.lead} />
-          <ImageReveal image={images.equipment} sizes="(min-width: 1024px) 40vw, 100vw" className="mt-10 aspect-square" />
+          <ImageReveal image={images.equipment} sizes="(min-width: 1024px) 40vw, 100vw" reveal={false} className="mt-10 aspect-square" />
         </div>
         <div className="space-y-5">
           {equipment.items.map((item, i) => {

@@ -21,7 +21,26 @@ export default function CourtSection() {
 
         {/* ===== Indoor vs. Outdoor + Bild ===== */}
         <div className="mt-14 grid items-center gap-10 lg:grid-cols-2">
-          <ImageReveal image={images.court} sizes="(min-width: 1024px) 50vw, 100vw" className="aspect-[16/10]" />
+          <figure className="relative grid aspect-[16/10] grid-cols-2 gap-2 overflow-hidden rounded-3xl shadow-soft">
+            <ImageReveal
+              image={images.courtIndoor}
+              sizes="(min-width: 1024px) 25vw, 50vw"
+              reveal={false}
+              framed={false}
+              className="h-full min-h-0"
+            />
+            <ImageReveal
+              image={images.courtOutdoor}
+              sizes="(min-width: 1024px) 25vw, 50vw"
+              reveal={false}
+              framed={false}
+              className="h-full min-h-0"
+            />
+            <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-between gap-2 bg-gradient-to-t from-brand-green/90 via-brand-green/35 to-transparent px-4 pb-4 pt-12 text-xs font-semibold uppercase tracking-[0.16em] text-white sm:px-5 sm:text-sm">
+              <span>Indoor</span>
+              <span>Outdoor</span>
+            </figcaption>
+          </figure>
           <div>
             <div className="grid gap-5 sm:grid-cols-2">
               {court.indoorOutdoor.map((card, i) => {

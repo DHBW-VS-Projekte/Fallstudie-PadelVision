@@ -19,6 +19,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import EuropeMap from "@/components/courts/EuropeMap";
 import LocationChips from "@/components/courts/LocationChips";
+import ImageReveal from "@/components/ui/ImageReveal";
 import { DEFAULT_SLUG, SELECT_LOCATION_EVENT, mapSection, type Location } from "@/components/courts/courtsContent";
 
 export interface CourtsExplorerProps {
@@ -31,6 +32,7 @@ export default function CourtsExplorer({ locations, land, details }: CourtsExplo
   // useState: der ausgewählte Standort (Slug). Startwert = Stammhaus Konstanz,
   // damit das Panel nie leer ist – auch nicht beim Server-Rendering.
   const [selected, setSelected] = useState<string>(DEFAULT_SLUG);
+  const selectedLocation = locations.find((location) => location.slug === selected) ?? locations[0];
 
   // useEffect: hört auf das Browser-Ereignis aus dem Standort-Raster
   // ("Auf der Karte zeigen"). Ein globaler Listener ist ein externes System –
@@ -49,7 +51,7 @@ export default function CourtsExplorer({ locations, land, details }: CourtsExplo
   return (
     // Desktop: Karte links (~60 %), Panel rechts (~40 %) und "sticky". Mobil: untereinander.
     <div className="grid gap-10 lg:grid-cols-[3fr_2fr] lg:items-start">
-      <div className="min-w-0">
+      <div className="min-w-0 lg:flex lg:flex-col lg:self-stretch">
         <LocationChips locations={locations} selected={selected} onSelect={setSelected} />
         <EuropeMap locations={locations} selected={selected} onSelect={setSelected} land={land} />
 
@@ -69,6 +71,26 @@ export default function CourtsExplorer({ locations, land, details }: CourtsExplo
           </span>
         </div>
         <p className="mt-3 text-xs text-muted">{mapSection.disclaimer}</p>
+        {selectedLocation && (
+          <figure className="relative mt-6 overflow-hidden rounded-3xl shadow-soft lg:sticky lg:top-0">
+            <ImageReveal
+              image={selectedLocation.image}
+              sizes="(min-width: 1024px) 60vw, 100vw"
+              reveal={false}
+              framed={false}
+              className="aspect-[16/9]"
+            />
+            <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 bg-gradient-to-t from-brand-green/90 via-brand-green/45 to-transparent px-6 pb-5 pt-20 text-white">
+              <span>
+                <span className="block text-xs font-semibold uppercase tracking-[0.18em] text-white/70">{selectedLocation.region}</span>
+                <strong className="mt-1 block text-xl font-semibold">{selectedLocation.name}</strong>
+              </span>
+              <span className="shrink-0 rounded-full bg-card/90 px-3 py-1.5 text-xs font-semibold text-accent">
+                {selectedLocation.badge}
+              </span>
+            </figcaption>
+          </figure>
+        )}
       </div>
 
       {/* ===== Detail-Panel =====

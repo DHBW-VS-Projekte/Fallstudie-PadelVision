@@ -14,22 +14,22 @@ export const metadata: Metadata = {
 };
 
 const aboutHeroImage = {
-  src: "/images/padelvision-club.png",
-  alt: "Padel-Courts und Clubterrasse in warmem Abendlicht",
+  src: "/images/padel/double.png",
+  alt: "Padel-Doppel bei einem gemeinsamen Abendmatch",
 };
-// TODO: Eigenes Konstanz-/Bodensee-Brandfoto unter /public/images/about/ ablegen und hier eintragen.
-const aboutKonstanzImage: string | null = null;
+const aboutFooterImage = "/images/community/coummunity-header2.png";
+const aboutClubImage = "/images/about/konstanz-roots.jpg";
+const aboutKonstanzImage = "/images/about/konstanz-roots.jpg";
 const aboutCommunityImage = {
-  src: "/images/community.jpg",
-  alt: "Freundinnen und Freunde verbringen nach dem Match Zeit miteinander",
+  src: "/images/community/event-padelmatch.png",
+  alt: "Freundinnen und Freunde treffen sich auf dem Padel-Court",
 };
 const aboutLifestyleImage = {
-  src: "/images/club.jpg",
-  alt: "Clubterrasse und Padel-Courts in mediterraner Atmosphäre",
+  src: "/images/padel/racket-ball.jpg",
+  alt: "Padelschläger und Padelbälle in Nahaufnahme",
 };
-// TODO: Originalfotos für Marbella und Santorini unter /public/images/about/ ergänzen.
-const aboutMarbellaImage: string | null = null;
-const aboutSantoriniImage: string | null = null;
+const aboutMarbellaImage = "/images/courts/marbella.jpg";
+const aboutSantoriniImage = "/images/courts/santorini.jpg";
 
 const locations = [
   { name: "Konstanz", note: "Ursprung · Deutschland", origin: true },
@@ -282,7 +282,7 @@ export default function AboutPage() {
                 />
               ) : (
                 <Image
-                  src={aboutHeroImage.src}
+                  src={aboutClubImage}
                   alt="Padel-Courts in einer mediterranen Clubanlage"
                   fill
                   sizes="(max-width: 800px) 100vw, 56vw"
@@ -347,7 +347,7 @@ export default function AboutPage() {
 
         <section className={styles.finalCta} aria-labelledby="cta-title">
           <Image
-            src={aboutHeroImage.src}
+            src={aboutFooterImage}
             alt=""
             fill
             sizes="100vw"

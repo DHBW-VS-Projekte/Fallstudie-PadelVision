@@ -24,7 +24,7 @@ export default function CourtsCta() {
               {ctaSection.primary}
               <ArrowRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-1" />
             </Link>
-            <Link href="/turniere-kurse" className="inline-flex min-h-12 items-center rounded-full border border-hero-ink/40 bg-hero-ink/10 px-7 font-semibold backdrop-blur-md transition-colors hover:bg-hero-ink/20">
+            <Link href="/events" className="inline-flex min-h-12 items-center rounded-full border border-hero-ink/40 bg-hero-ink/10 px-7 font-semibold backdrop-blur-md transition-colors hover:bg-hero-ink/20">
               {ctaSection.secondary}
             </Link>
           </div>

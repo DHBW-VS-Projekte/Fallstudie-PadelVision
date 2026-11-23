@@ -40,7 +40,7 @@ export default function CourtsHero() {
         </p>
         <div className="fade-up mt-10 flex flex-wrap gap-3" style={{ animationDelay: "1000ms" }}>
           <a
-            href="#karte"
+            href="#standortkarte"
             className="group inline-flex min-h-12 items-center gap-2 rounded-full bg-brand-green px-7 font-semibold text-white shadow-lift transition-transform hover:-translate-y-0.5 active:translate-y-0"
           >
             {hero.primary}

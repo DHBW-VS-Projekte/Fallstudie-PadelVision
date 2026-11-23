@@ -132,7 +132,7 @@ export default function EuropeMap({ locations, selected, onSelect, land }: Europ
   const selectedExists = ordered.some((l) => l.slug === selected);
 
   return (
-    <div ref={stageRef} data-map className="map-stage relative w-full px-1 pb-8 pt-12 sm:pt-16">
+    <div id="standortkarte" ref={stageRef} data-map className="map-stage relative w-full scroll-mt-20 px-1 pb-8 pt-6 sm:pt-8">
       <div data-map-plane className="map-plane relative w-full" style={{ aspectRatio: `${MAP_WIDTH} / ${MAP_HEIGHT}` }}>
         {/* Weicher Schatten unter der gesamten Karte */}
         <div aria-hidden="true" className="absolute inset-x-[6%] -bottom-6 h-12 rounded-full bg-hero-shade/30 blur-2xl" />

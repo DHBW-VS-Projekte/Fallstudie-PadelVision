@@ -29,7 +29,7 @@ export default function LocationGrid() {
                 className="interactive-card flex flex-col overflow-hidden rounded-3xl border border-line bg-card shadow-soft"
               >
                 <div className="relative">
-                  <ImageReveal image={l.image} sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" framed={false} className="aspect-[4/3]" />
+                  <ImageReveal image={l.image} sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" reveal={false} framed={false} className="aspect-[4/3]" />
                   <span className="absolute left-4 top-4 rounded-full bg-card/85 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.15em] text-accent backdrop-blur-md">
                     {l.badge}
                   </span>

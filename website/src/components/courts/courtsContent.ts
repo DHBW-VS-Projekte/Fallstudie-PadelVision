@@ -142,7 +142,7 @@ export const locations: Location[] = [
       { icon: "academy", label: "Kurse für Einsteiger" },
     ],
     hours: "Mo–So 7–23 Uhr",
-    address: "Seestraße 1 (Platzhalter), 78462 Konstanz",
+    address: "Seestraße 42, 78462 Konstanz",
     image: { src: "/images/courts/konstanz.jpg", alt: "Padel-Halle mit großen Fenstern und Blick auf den Bodensee", fallback: "sea" },
     tone: "accent-2",
     events: [
@@ -172,7 +172,7 @@ export const locations: Location[] = [
       { icon: "academy", label: "Trainer-Academy" },
     ],
     hours: "Mo–So 8–24 Uhr",
-    address: "Avenida del Mar 1 (Platzhalter), Marbella",
+    address: "Avenida del Mar 1, Marbella",
     image: { src: "/images/courts/marbella.jpg", alt: "Outdoor-Padel-Courts zwischen Palmen im warmen Abendlicht", fallback: "sun" },
     tone: "accent",
     events: [
@@ -201,7 +201,7 @@ export const locations: Location[] = [
       { icon: "yoga", label: "Yoga-Deck" },
     ],
     hours: "April–Oktober täglich 8–22 Uhr",
-    address: "Route de la Plage 1 (Platzhalter), Porto-Vecchio",
+    address: "Route de la Plage 1, Porto-Vecchio",
     image: { src: "/images/courts/porto-vecchio.jpg", alt: "Padel-Court zwischen Pinien mit Blick aufs türkise Meer", fallback: "olive" },
     tone: "olive",
     events: [
@@ -231,7 +231,7 @@ export const locations: Location[] = [
       { icon: "lounge", label: "Sunset-Sessions" },
     ],
     hours: "Mo–So 9–23 Uhr",
-    address: "Caldera Path 1 (Platzhalter), Santorini",
+    address: "Caldera Path 17, Santorini",
     image: { src: "/images/courts/santorini.jpg", alt: "Padel-Court zwischen weißen Häusern im Sonnenuntergang", fallback: "dusk" },
     tone: "glass",
     events: [
@@ -260,7 +260,7 @@ export const locations: Location[] = [
       { icon: "parking", label: "Parkplatz" },
     ],
     hours: "Mo–So 8–23 Uhr",
-    address: "Odos Limaniou 1 (Platzhalter), Chania",
+    address: "Odos Limaniou 308, Chania",
     image: { src: "/images/courts/chania.jpg", alt: "Padel-Court mit Blick auf Olivenhaine und den alten Hafen", fallback: "terra" },
     tone: "mesh",
     events: [
@@ -285,7 +285,7 @@ export const SELECT_LOCATION_EVENT = "padelvision:select-location";
 
 export const pageImages = {
   hero: { src: "/images/courts/courts-hero.jpg", alt: "Panorama-Padel-Court am Meer im Abendlicht", fallback: "dusk" },
-  indoor: { src: "/images/courts/indoor.jpg", alt: "Heller Indoor-Padel-Court in einer modernen Halle", fallback: "sea" },
+  indoor: { src: "/images/courts/indoor-konstanz.png", alt: "Heller Indoor-Padel-Court in einer modernen Clubhalle", fallback: "sea" },
   outdoor: { src: "/images/courts/outdoor.jpg", alt: "Outdoor-Padel-Court in der Sonne mit Meer im Hintergrund", fallback: "sun" },
   cta: { src: "/images/courts/courts-cta.jpg", alt: "Gruppe stößt nach dem Padel-Match lachend an", fallback: "dusk" },
 } satisfies Record<string, PadelImage>;
@@ -319,8 +319,8 @@ export const mapSection = {
 
 export const gridSection = {
   eyebrow: "Alle Standorte",
-  title: "Fünf Courts-Welten im Überblick.",
-  lead: "Jeder Standort hat seinen eigenen Charakter. Gemeinsam ist allen: gute Courts und gute Leute.",
+  title: "Fünf Court-Welten im Überblick.",
+  lead: "Jeder Standort hat seinen eigenen Charakter. Bei uns findest du überall gute Courts, Atmosphäre und gute Leute.",
 };
 
 export const eventsSection = {

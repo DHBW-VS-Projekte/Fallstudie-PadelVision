@@ -14,7 +14,7 @@ export default function GameplaySection() {
     <section id="spielablauf" aria-labelledby="spielablauf-title" className="bg-surface py-16 lg:py-20">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-start">
-          <ImageReveal image={images.wallPlay} sizes="(min-width: 1024px) 50vw, 100vw" className="order-last aspect-[4/5] lg:order-first" />
+          <ImageReveal image={images.wallPlay} sizes="(min-width: 1024px) 50vw, 100vw" reveal={false} className="order-last aspect-[4/3] lg:order-first" />
           <div>
             <SectionHeading id="spielablauf-title" eyebrow={eyebrowFor("spielablauf")} title={gameplay.title} lead={gameplay.lead} />
             <ul className="mt-8 space-y-4">

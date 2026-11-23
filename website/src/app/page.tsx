@@ -131,12 +131,17 @@ export default function Home() {
         <div className="pv-hero-edge" aria-hidden="true" />
       </section>
 
-      <section className="pv-story pv-container" id="experience" aria-labelledby="experience-title">
-        <div className="pv-story-art pv-animate" style={{ animationDelay: "0.12s" }}>
+      <section className="pv-story pv-container" aria-labelledby="experience-title">
+        <div id="experience" className="pv-story-art pv-animate" style={{ animationDelay: "0.12s" }}>
           <div
             className="pv-story-photo"
             role="img"
-            aria-label="Einladende PadelVision Clubterrasse mit mediterranem Flair"
+            aria-label="PadelVision-Spielerinnen und -Spieler genießen Zeit zusammen auf der Clubterrasse"
+          />
+          <div
+            className="pv-story-action"
+            role="img"
+            aria-label="Spielerin in einer dynamischen Rallye auf dem Padel-Court"
           />
           <div className="pv-story-plaque">
             <span>MORE THAN THE MATCH</span>

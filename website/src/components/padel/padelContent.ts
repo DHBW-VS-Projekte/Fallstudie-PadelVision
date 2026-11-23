@@ -117,12 +117,13 @@ export function eyebrowFor(id: string): string {
 
 export const images = {
   hero: { src: "/images/padel/hero.jpg", alt: "Padelspieler springt am Netz in die Sonne, um einen Ball zu schmettern", fallback: "dusk" },
-  doubles: { src: "/images/padel/doubles.jpg", alt: "Vier Spielerinnen und Spieler im Doppel auf einem Padel-Court mit Glaswänden", fallback: "terra" },
-  history: { src: "/images/padel/history.jpg", alt: "Stimmungsvoller Padel-Court im warmen Abendlicht", fallback: "sun" },
-  court: { src: "/images/padel/court-overview.jpg", alt: "Padel-Court von schräg oben mit Glaswänden und Metallgitter", fallback: "sea" },
-  equipment: { src: "/images/padel/racket-ball.jpg", alt: "Padelschläger mit gelochter Schlagfläche neben zwei Bällen", fallback: "olive" },
-  serve: { src: "/images/padel/serve.jpg", alt: "Spieler schlägt den Ball beim Aufschlag von unten auf Hüfthöhe", fallback: "terra" },
-  wallPlay: { src: "/images/padel/wall-play.jpg", alt: "Spielerin nimmt den Ball nach dem Abprall von der Glaswand an", fallback: "sea" },
+  doubles: { src: "/images/padel/double.png", alt: "Vier Spielerinnen und Spieler im Doppel auf einem Padel-Court", fallback: "terra" },
+  history: { src: "/images/padel/history-acapulco.png", alt: "Historische Padel-Szene aus Acapulco", fallback: "sun" },
+  courtIndoor: { src: "/images/courts/indoor-konstanz.png", alt: "Moderner Padel-Court in einer hellen Indoor-Halle", fallback: "sea" },
+  courtOutdoor: { src: "/images/courts/outdoor.jpg", alt: "Outdoor-Padel-Court im warmen Abendlicht", fallback: "sun" },
+  equipment: { src: "/images/padel/gear-3.png", alt: "Padelschläger, Tasche und Padel-Zubehör von PadelVision am Court", fallback: "olive" },
+  serve: { src: "/images/padel/serve-2.jpg", alt: "Spielerin führt einen gezielten Aufschlag auf dem Padel-Court aus", fallback: "terra" },
+  wallPlay: { src: "/images/padel/wall_bounce_back.png", alt: "Padelspieler spielt einen Ball nahe der Glaswand zurück", fallback: "sea" },
   community: { src: "/images/padel/community.jpg", alt: "Lachende Gruppe nach dem Padel-Match am Court", fallback: "dusk" },
 } satisfies Record<string, PadelImage>;
 
@@ -178,7 +179,7 @@ export const court = {
     { title: "Indoor", text: "Wetterunabhängig und ganzjährig spielbar – perfekt für feste Trainingszeiten." },
     { title: "Outdoor", text: "Sonne, frische Luft und Sommerfeeling – Padel, wie es in Spanien gespielt wird." },
   ] satisfies InfoCard[],
-  padelVisionNote: "Bei PadelVision hast du die Wahl: 2 Indoor-Courts und 1 Outdoor-Court.",
+  padelVisionNote: "Bei PadelVision hast du die Wahl: 7 Indoor-Courts und 13 Outdoor-Courts.",
 };
 
 /** Bereiche der interaktiven Court-Grafik */
@@ -312,5 +313,5 @@ export const finalCta = {
   title: "Bereit für dein erstes Match?",
   text: "Schnapp dir drei Freunde, buch einen Court und erleb selbst, warum so viele nicht mehr aufhören wollen.",
   primary: "Court buchen",
-  secondary: "Kurs finden",
+  secondary: "Events finden",
 };

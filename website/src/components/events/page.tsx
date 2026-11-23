@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowDown, ArrowRight, CalendarDays, MapPin } from "lucide-react";
 import type { Metadata } from "next";
 import EventFilter, { type EventFilterValue } from "@/components/courts/EventFilter";
@@ -71,6 +72,15 @@ export default function EventsPage() {
 
             {nextEvent && nextDate && (
               <article className="relative rounded-[2rem] border border-white/15 bg-white/[0.08] p-6 shadow-2xl backdrop-blur-sm sm:p-8">
+                <Image
+                  src="/images/community/event-padelmatch.png"
+                  alt="Community-Mitglieder spielen gemeinsam Padel"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 42vw"
+                  className="absolute inset-0 rounded-[2rem] object-cover"
+                />
+                <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-r from-brand-green/95 via-brand-green/82 to-brand-green/35" aria-hidden="true" />
+                <div className="relative z-10">
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-white/65">Als Nächstes</p>
                 <div className="mt-6 flex items-start justify-between gap-5">
                   <div>
@@ -97,6 +107,7 @@ export default function EventsPage() {
                   Platz sichern
                   <ArrowRight aria-hidden="true" className="size-4" />
                 </Link>
+                </div>
               </article>
             )}
           </div>

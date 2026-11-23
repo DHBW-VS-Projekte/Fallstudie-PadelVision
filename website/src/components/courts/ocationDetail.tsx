@@ -21,7 +21,7 @@ export default function LocationDetail({ location: l }: { location: Location }) 
     <article aria-labelledby={`detail-${l.slug}`} className="overflow-hidden rounded-3xl border border-line bg-card shadow-lift">
       {/* ===== Bild + Badge ===== */}
       <div className="relative">
-        <ImageReveal image={l.image} sizes="(min-width: 1024px) 40vw, 100vw" framed={false} className="aspect-[4/3]" />
+        <ImageReveal image={l.image} sizes="(min-width: 1024px) 40vw, 100vw" reveal={false} framed={false} className="aspect-[4/3]" />
         <span className="absolute left-4 top-4 rounded-full bg-card/85 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.15em] text-accent shadow-soft backdrop-blur-md">
           {l.badge}
         </span>
@@ -119,7 +119,7 @@ export default function LocationDetail({ location: l }: { location: Location }) 
             Court in {l.city} buchen
             <ArrowRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-1" />
           </Link>
-          <Link href="/turniere-kurse" className="inline-flex min-h-12 items-center rounded-full border border-line px-6 font-semibold transition-colors hover:border-accent">
+          <Link href="/events" className="inline-flex min-h-12 items-center rounded-full border border-line px-6 font-semibold transition-colors hover:border-accent">
             Alle Events
           </Link>
         </div>

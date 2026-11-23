@@ -42,7 +42,7 @@ export default function IndoorOutdoor() {
         <div className="mt-14 grid gap-6 md:grid-cols-2">
           {cards.map((c, i) => (
             <Reveal key={c.key} direction={i === 0 ? "left" : "right"} className="interactive-card group relative isolate overflow-hidden rounded-3xl shadow-lift">
-              <ImageReveal image={c.image} sizes="(min-width: 768px) 50vw, 100vw" framed={false} className="aspect-[4/5]" />
+              <ImageReveal image={c.image} sizes="(min-width: 768px) 50vw, 100vw" reveal={false} framed={false} className="aspect-[4/5]" />
               {/* Verlauf von unten für die Lesbarkeit des hellen Textes */}
               <div aria-hidden="true" className="absolute inset-0 bg-linear-to-t from-hero-shade/90 via-hero-shade/35 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-7 text-hero-ink sm:p-9">

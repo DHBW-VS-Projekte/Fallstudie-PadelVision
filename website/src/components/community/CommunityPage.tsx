@@ -18,8 +18,8 @@ const moments = [
     category: "Community Evening",
     text:
       "Ein langer Sommerabend mit lockeren Mixed-Matches, neuen Spielpartnern und einem letzten Drink am Wasser.",
-    image: "/images/club.jpg",
-    alt: "Gäste treffen sich nach dem Padel-Match auf der Clubterrasse",
+    image: "/images/community/event-padelmatch.png",
+    alt: "Gäste treffen sich zu Mixed-Matches auf dem Padel-Court",
   },
 ];
 
@@ -84,7 +84,7 @@ export default function CommunityPage() {
 
       <main id="community-content" className={styles.page}>
         <section className={styles.hero} aria-labelledby="community-title">
-          <Reveal as="div" direction="up" className={styles.heroCopy}>
+          <div className={`${styles.heroCopy} ${styles.heroEnterCopy}`}>
             <h1 id="community-title">
               <span className={styles.heroIntro}>JOIN THE</span>
               <span className={styles.heroTitle}>COMMUNITY.</span>
@@ -96,12 +96,12 @@ export default function CommunityPage() {
               COMMUNITY MOMENTS
               <ArrowRight aria-hidden="true" />
             </a>
-          </Reveal>
+          </div>
 
-          <Reveal as="figure" direction="right" delay={120} className={styles.heroImageMain}>
+          <figure className={`${styles.heroImageMain} ${styles.heroEnterMain}`}>
             <Image
-              src="/images/community.jpg"
-              alt="Freunde stoßen nach einem gemeinsamen Padel-Abend an"
+              src="/images/padel/community-2.jpg"
+              alt="Padel-Spielerinnen und -Spieler verbringen gemeinsam Zeit auf der Clubterrasse"
               fill
               priority
               sizes="(max-width: 800px) 92vw, 54vw"
@@ -111,17 +111,17 @@ export default function CommunityPage() {
               <span>PADELVISION · KONSTANZ</span>
               <strong>More than the match.</strong>
             </figcaption>
-          </Reveal>
+          </figure>
 
-          <Reveal as="figure" direction="left" delay={220} className={styles.heroImageSmall}>
+          <figure className={`${styles.heroImageSmall} ${styles.heroEnterSmall}`}>
             <Image
-              src="/images/hero.jpg"
-              alt="Spieler in einer dynamischen Rallye auf dem Padel-Court"
+              src="/images/community/event-padelmatch.png"
+              alt="Spielerinnen und Spieler genießen ein gemeinsames Mixed-Match"
               fill
               sizes="(max-width: 800px) 70vw, 22vw"
               className={styles.coverImage}
             />
-          </Reveal>
+          </figure>
         </section>
 
         <section className={styles.journal} id="moments" aria-label="Vergangene Community-Momente">
@@ -157,14 +157,14 @@ export default function CommunityPage() {
 
             <figure className={styles.secondaryMoment}>
               <Image
-                src="/images/hero.jpg"
-                alt="Im Freien gespieltes Padel-Match bei Sonnenschein"
+                src="/images/community/event-horizontal-split.png"
+                alt="Mixed-Doppel und Zuschauer bei einer geselligen Event-Runde"
                 fill
                 sizes="(max-width: 800px) 100vw, 34vw"
                 className={styles.coverImage}
               />
               <figcaption>
-                <span>09. MAI 2026 · KONSTANZ</span>
+                <span>09. MAI 2026</span>
                 <strong>Saturday Mix</strong>
                 <small>
                   Spontane Mixed-Matches, die bis zum Sonnenuntergang weitergingen.
@@ -293,7 +293,7 @@ export default function CommunityPage() {
           <div className={styles.newsletterImage} aria-hidden="true">
             <Link href="/courts" tabIndex={-1} aria-label="Padel-Courts entdecken">
               <Image
-                src="/images/padelvision-club.png"
+                src="/images/courts/courts-cta.jpg"
                 alt=""
                 fill
                 sizes="(max-width: 800px) 100vw, 38vw"

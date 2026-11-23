@@ -58,7 +58,7 @@ export default function CourtsPage() {
         <StatsBand />
 
         {/* ===== Abschnitt: Interaktive Karte + Detail-Panel ===== */}
-        <section id="karte" aria-labelledby="karte-title" className="relative isolate overflow-hidden py-24 lg:py-32">
+        <section id="karte" aria-labelledby="karte-title" className="relative isolate overflow-clip py-24 lg:py-32">
           <FloatingShapes variant="a" />
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             <SectionHeading id="karte-title" eyebrow={mapSection.eyebrow} title={mapSection.title} lead={mapSection.lead} />
