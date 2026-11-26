@@ -4,9 +4,8 @@
  *
  * - acquire(): POST /api/hold.php. Bis die Antwort da ist, merkt sich der Hook
  *   den angeklickten Slot (pendingStart) → die Kachel zeigt einen Ladezustand.
- * - Ein neuer Hold ERSETZT den alten: Das macht der Server in derselben
- *   Transaktion (alter Hold dieses Geräts wird gelöscht). Scheitert der neue
- *   Hold, bleibt der alte erhalten.
+ * - Ein neuer Hold ersetzt den alten Hold dieses Tabs in derselben Transaktion.
+ *   Dafür werden ID und Token des alten Holds an den Server übergeben.
  * - release(): "feuern und vergessen" – läuft der Hold ohnehin ab, ist ein
  *   Fehler hier unkritisch.
  */
@@ -28,10 +27,16 @@ export function useHold() {
   // useState: Start (ISO) des Slots, für den gerade ein Hold angefragt wird
   const [pendingStart, setPendingStart] = useState<string | null>(null);
 
-  const acquire = useCallback(async (courtId: string, date: string, time: string, start: string): Promise<HoldOutcome> => {
+  const acquire = useCallback(async (
+    courtId: string,
+    date: string,
+    time: string,
+    start: string,
+    previousHold?: Pick<HoldInfo, "holdId" | "holdToken">,
+  ): Promise<HoldOutcome> => {
     setPendingStart(start);
     try {
-      return { ok: true, hold: await api.hold(courtId, date, time) };
+      return { ok: true, hold: await api.hold(courtId, date, time, previousHold) };
     } catch (error) {
       const apiError = asApiError(error);
       const raw = apiError.details.suggestions;

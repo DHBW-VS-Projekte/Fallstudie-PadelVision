@@ -9,11 +9,9 @@ declare(strict_types=1);
  *
  * Status eines 90-Minuten-Slots aus Sicht des anfragenden Geräts:
  *  - booked: mindestens eine der 3 Zellen ist bestätigt
- *  - held:   mindestens eine Zelle ist von einem ANDEREN Gerät reserviert (nicht abgelaufen)
- *  - mine:   alle 3 Zellen gehören zu genau MEINEM Hold
- *  - free:   sonst. Abgelaufene Holds zählen als frei. Überschneidet sich nur
- *            MEIN eigener Hold teilweise, ist der Slot für mich frei: Ein Klick
- *            verschiebt meinen Hold (create_hold löscht meinen alten zuerst).
+ *  - held:   mindestens eine Zelle ist reserviert, aber der Slot ist nicht exakt mein Hold
+ *  - mine:   alle 3 Zellen gehören zu genau einem Hold dieses Geräts
+ *  - free:   keine Zelle ist aktiv reserviert. Abgelaufene Holds zählen als frei.
  */
 
 /** @return array<string, array<string, array<string, mixed>>> court_id → cell_start → Zeile */
@@ -66,19 +64,25 @@ function pv_slot_status(array $courtCells, array $cellKeys, string $deviceId, Da
         }
         if ($row['device_id'] === $deviceId) {
             $mineIds[] = (string) $row['hold_id'];
-            $mineUntil = $expires;
+            if ($mineUntil === null || $expires > $mineUntil) {
+                $mineUntil = $expires;
+            }
         } elseif ($foreignUntil === null || $expires > $foreignUntil) {
-            $foreignUntil = $expires; // frei erst, wenn ALLE fremden Holds abgelaufen sind
+            $foreignUntil = $expires;
         }
     }
     if ($booked) {
         return ['status' => 'booked', 'expiresAt' => null];
     }
     if ($foreignUntil !== null) {
-        return ['status' => 'held', 'expiresAt' => $foreignUntil];
+        $heldUntil = $mineUntil !== null && $mineUntil > $foreignUntil ? $mineUntil : $foreignUntil;
+        return ['status' => 'held', 'expiresAt' => $heldUntil];
     }
     if (count($mineIds) === count($cellKeys) && count(array_unique($mineIds)) === 1) {
         return ['status' => 'mine', 'expiresAt' => $mineUntil];
+    }
+    if ($mineIds !== []) {
+        return ['status' => 'held', 'expiresAt' => $mineUntil];
     }
     return ['status' => 'free', 'expiresAt' => null];
 }

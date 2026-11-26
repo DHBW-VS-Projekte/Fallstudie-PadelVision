@@ -21,6 +21,7 @@ import { holdValid, type HeldSlot } from "@/components/booking/wizardState";
 import { catalog } from "@/lib/booking/catalog";
 import { errorMessage } from "@/lib/booking/errors";
 import { dayPart, formatDateLong, type DayPart } from "@/lib/booking/format";
+import { effectiveSlotStatus } from "@/lib/booking/slot-status";
 import type { ApiSlot, CatalogCourt, SlotStatus, Suggestion } from "@/lib/booking/types";
 
 export interface TimeStepProps {
@@ -44,22 +45,18 @@ export default function TimeStep({ court, date, hold, now, onHold, onContinue, o
   // useState: Hinweis nach verlorenem Rennen oder Fehler
   const [notice, setNotice] = useState<Notice>(null);
 
-  // Versatz Server-Uhr ↔ Geräte-Uhr, damit fremde Holds pünktlich als frei erscheinen
-  const skew = live.data ? Date.parse(live.data.serverTime) - now : 0;
+  // Fester Versatz aus der letzten Antwort; verändert sich nicht mit jeder Sekunde.
+  const skew = live.serverClockSkew;
   const myHold = holdValid(hold, now) && hold.courtId === court.id && hold.date === date ? hold : null;
 
   function effectiveStatus(slot: ApiSlot): SlotStatus {
-    if (slot.status === "booked") return "booked";
-    if (myHold && myHold.start === slot.start) return "mine";
-    const expired = slot.expiresAt !== null && Date.parse(slot.expiresAt) <= now + skew;
-    if (slot.status === "held" && !expired) return "held";
-    // Server meldet "mine", aber dieser Tab kennt den Token nicht (z. B. zweiter Tab) → frei; ein Klick holt den Hold neu
-    return "free";
+    return effectiveSlotStatus(slot, myHold?.start === slot.start, now, skew);
   }
 
   async function reserve(courtId: string, slotDate: string, time: string, start: string) {
     if (pendingStart) return;
-    const result = await acquire(courtId, slotDate, time, start);
+    const previousHold = holdValid(hold, now) ? { holdId: hold.holdId, holdToken: hold.holdToken } : undefined;
+    const result = await acquire(courtId, slotDate, time, start, previousHold);
     live.refresh(); // sofort neu laden, nicht auf das nächste Polling warten
     if (result.ok) {
       setNotice(null);

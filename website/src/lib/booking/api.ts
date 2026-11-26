@@ -80,12 +80,12 @@ const enc = encodeURIComponent;
 
 export const api = {
   version: (signal?: AbortSignal) => get<{ version: number }>("/version.php", signal).then((d) => d.version),
-  // "no-cache": Browser schickt das gespeicherte ETag mit → Server kann mit 304 antworten
   availability: (courtId: string, date: string, signal?: AbortSignal) =>
-    get<AvailabilityResponse>(`/availability.php?court=${enc(courtId)}&date=${enc(date)}`, signal, "no-cache"),
+    get<AvailabilityResponse>(`/availability.php?court=${enc(courtId)}&date=${enc(date)}`, signal),
   days: (courtId: string, signal?: AbortSignal) => get<DaysResponse>(`/days.php?court=${enc(courtId)}`, signal),
   summary: (location: string, signal?: AbortSignal) => get<SummaryResponse>(`/summary.php?location=${enc(location)}`, signal),
-  hold: (courtId: string, date: string, time: string) => post<HoldInfo>("/hold.php", { courtId, date, time }),
+  hold: (courtId: string, date: string, time: string, previousHold?: Pick<HoldInfo, "holdId" | "holdToken">) =>
+    post<HoldInfo>("/hold.php", { courtId, date, time, previousHold }),
   release: (holdId: string, holdToken: string) => post<{ released: boolean }>("/release.php", { holdId, holdToken }),
   book: (payload: BookRequest) => post<BookingResult>("/book.php", payload),
   cancel: (code: string, email: string) => post<BookingResult>("/cancel.php", { code, email }),

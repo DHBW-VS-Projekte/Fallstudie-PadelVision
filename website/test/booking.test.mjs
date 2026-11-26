@@ -16,6 +16,7 @@ const catalog = JSON.parse(readFileSync(new URL("../src/data/catalog.json", impo
 const format = await import("../src/lib/booking/format.ts");
 const errors = await import("../src/lib/booking/errors.ts");
 const pricing = await import("../src/lib/booking/pricing-display.ts");
+const slotStatus = await import("../src/lib/booking/slot-status.ts");
 
 test("Formatierung: Euro", () => {
   assert.equal(format.formatEuro(2800).replace(/\s/g, " "), "28 €");
@@ -33,6 +34,15 @@ test("Formatierung: Countdown", () => {
   assert.equal(format.formatCountdown(300000), "5:00");
   assert.equal(format.formatCountdown(59001), "1:00");
   assert.equal(format.formatCountdown(-5), "0:00");
+});
+
+test("Hold aus anderem Tab ist bis zum Ablauf gesperrt", () => {
+  const expiresAt = "2027-03-14T10:05:00Z";
+  assert.equal(slotStatus.effectiveSlotStatus({ status: "mine", expiresAt }, false, Date.parse("2027-03-14T10:00:00Z"), 0), "held");
+  assert.equal(slotStatus.effectiveSlotStatus({ status: "mine", expiresAt }, false, Date.parse("2027-03-14T10:05:00Z"), 0), "free");
+  assert.equal(slotStatus.effectiveSlotStatus({ status: "mine", expiresAt }, true, Date.parse("2027-03-14T10:00:00Z"), 0), "mine");
+  assert.equal(slotStatus.effectiveSlotStatus({ status: "mine", expiresAt }, false, Date.parse("2027-03-14T10:02:00Z"), 120_000), "held");
+  assert.equal(slotStatus.effectiveSlotStatus({ status: "mine", expiresAt }, false, Date.parse("2027-03-14T10:03:00Z"), 120_000), "free");
 });
 
 test("Formatierung: Tagesabschnitte", () => {

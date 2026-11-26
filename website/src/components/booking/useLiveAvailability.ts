@@ -19,11 +19,13 @@ interface Loaded {
   key: string;
   data: AvailabilityResponse | null;
   error: ApiError | null;
+  serverClockSkew: number;
 }
 
 export interface LiveAvailability {
   data: AvailabilityResponse | null;
   error: ApiError | null;
+  serverClockSkew: number;
   status: LiveStatus;
   refresh: () => void;
 }
@@ -31,7 +33,7 @@ export interface LiveAvailability {
 export function useLiveAvailability(courtId: string, date: string): LiveAvailability {
   const { version, status } = useLiveVersion(5000);
   // useState: zuletzt geladene Belegung inkl. Schlüssel "court|date"
-  const [loaded, setLoaded] = useState<Loaded>({ key: "", data: null, error: null });
+  const [loaded, setLoaded] = useState<Loaded>({ key: "", data: null, error: null, serverClockSkew: 0 });
   // useState: Zähler für refresh() – eine Erhöhung startet den Lade-Effekt neu
   const [nonce, setNonce] = useState(0);
   const key = `${courtId}|${date}`;
@@ -39,13 +41,21 @@ export function useLiveAvailability(courtId: string, date: string): LiveAvailabi
   useEffect(() => {
     const controller = new AbortController();
     const timer = setTimeout(async () => {
+      const requestStartedAt = Date.now();
       try {
         const data = await api.availability(courtId, date, controller.signal);
-        setLoaded({ key, data, error: null });
+        const receivedAt = Date.now();
+        const serverClockSkew = Date.parse(data.serverTime) - (requestStartedAt + receivedAt) / 2;
+        setLoaded({ key, data, error: null, serverClockSkew });
       } catch (error) {
         if (controller.signal.aborted) return;
         // Bei Fehler alte Daten desselben Tages behalten, nur den Fehler merken
-        setLoaded((prev) => ({ key, data: prev.key === key ? prev.data : null, error: asApiError(error) }));
+        setLoaded((prev) => ({
+          key,
+          data: prev.key === key ? prev.data : null,
+          error: asApiError(error),
+          serverClockSkew: prev.key === key ? prev.serverClockSkew : 0,
+        }));
       }
     }, 0);
     return () => {
@@ -57,5 +67,11 @@ export function useLiveAvailability(courtId: string, date: string): LiveAvailabi
   // useCallback: stabile Funktion, damit Kinder nicht unnötig neu rendern
   const refresh = useCallback(() => setNonce((n) => n + 1), []);
   const current = loaded.key === key;
-  return { data: current ? loaded.data : null, error: current ? loaded.error : null, status, refresh };
+  return {
+    data: current ? loaded.data : null,
+    error: current ? loaded.error : null,
+    serverClockSkew: current ? loaded.serverClockSkew : 0,
+    status,
+    refresh,
+  };
 }

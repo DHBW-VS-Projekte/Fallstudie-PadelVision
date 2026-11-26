@@ -22,7 +22,9 @@ declare(strict_types=1);
  * 5 Minuten. Der Browser bekommt einen zufälligen Token; in der Datenbank
  * steht nur dessen SHA-256-Hash. Nur wer den Token kennt, kann bestätigen
  * oder freigeben. Abgelaufene Holds gelten als frei und werden beim nächsten
- * Hold-Versuch auf diese Zellen gelöscht.
+ * Hold-Versuch auf diese Zellen gelöscht. Ein bestehender Hold kann nur mit
+ * seiner Hold-ID und seinem Token ersetzt werden, und auch dann nicht durch
+ * einen überlappenden Slot.
  *
  * IDEMPOTENZ: Der Browser schickt beim Buchen einen Zufallsschlüssel
  * (crypto.randomUUID). Kommt dieselbe Anfrage zweimal (Doppelklick,
@@ -54,7 +56,15 @@ function pv_generate_code(): string
  * Hold anlegen.
  * @throws PvError SLOT_TAKEN (mit Vorschlägen), OUTSIDE_HOURS, NOT_FOUND, VALIDATION
  */
-function pv_create_hold(PDO $pdo, string $courtId, string $date, string $time, string $deviceId): array
+function pv_create_hold(
+    PDO $pdo,
+    string $courtId,
+    string $date,
+    string $time,
+    string $deviceId,
+    ?string $previousHoldId = null,
+    ?string $previousHoldToken = null,
+): array
 {
     ['court' => $court, 'location' => $location] = pv_v_court($courtId);
     $date = pv_v_date($date);
@@ -69,17 +79,38 @@ function pv_create_hold(PDO $pdo, string $courtId, string $date, string $time, s
     $expires = $now->modify('+' . pv_rules()['holdSeconds'] . ' seconds');
 
     try {
-        pv_transaction($pdo, static function (PDO $pdo) use ($courtId, $cells, $holdId, $tokenHash, $deviceId, $expires, $now): void {
+        pv_transaction($pdo, static function (PDO $pdo) use ($courtId, $cells, $holdId, $tokenHash, $deviceId, $expires, $now, $previousHoldId, $previousHoldToken): void {
             $in = implode(',', array_fill(0, count($cells), '?'));
             // 2) Abgelaufene Holds GENAU dieser drei Zellen entfernen, damit sie den UNIQUE-
             //    Schlüssel nicht blockieren. Vergleich mit PHP-"jetzt" statt UTC_TIMESTAMP():
             //    expires_at wurde ebenfalls mit PHP-Zeit geschrieben – gleiche Uhr, kein Versatz.
             $pdo->prepare("DELETE FROM slot_cells WHERE court_id = ? AND cell_start IN ($in) AND status = 'hold' AND expires_at < ?")
                 ->execute([$courtId, ...$cells, pv_db_time($now)]);
-            // 3) Ein Gerät hält immer nur EINEN Slot: alten Hold dieses Geräts entfernen.
-            //    Scheitert unten das INSERT, macht ROLLBACK auch dieses DELETE rückgängig –
-            //    der alte Hold bleibt dann erhalten.
-            $pdo->prepare("DELETE FROM slot_cells WHERE device_id = ? AND status = 'hold'")->execute([$deviceId]);
+            // Abgelaufene Holds desselben Geräts bereinigen; aktive Holds aus
+            // anderen Tabs dürfen ohne deren Token nicht ersetzt werden.
+            $pdo->prepare("DELETE FROM slot_cells WHERE device_id = ? AND status = 'hold' AND expires_at <= ?")
+                ->execute([$deviceId, pv_db_time($now)]);
+            if ($previousHoldId !== null && $previousHoldToken !== null) {
+                $stmt = $pdo->prepare(
+                    "SELECT cell_start, hold_token_hash FROM slot_cells
+                      WHERE hold_id = ? AND device_id = ? AND status = 'hold' AND expires_at > ?
+                      FOR UPDATE"
+                );
+                $stmt->execute([$previousHoldId, $deviceId, pv_db_time($now)]);
+                $previousCells = [];
+                $previousTokenMatches = true;
+                $expectedPreviousTokenHash = hash('sha256', $previousHoldToken);
+                foreach ($stmt as $row) {
+                    $previousCells[] = (string) $row['cell_start'];
+                    if (!is_string($row['hold_token_hash']) || !hash_equals($row['hold_token_hash'], $expectedPreviousTokenHash)) {
+                        $previousTokenMatches = false;
+                    }
+                }
+                if ($previousCells !== [] && $previousTokenMatches && array_intersect($previousCells, $cells) === []) {
+                    $pdo->prepare("DELETE FROM slot_cells WHERE hold_id = ? AND device_id = ? AND status = 'hold'")
+                        ->execute([$previousHoldId, $deviceId]);
+                }
+            }
             // 4) Drei Zellen einfügen. Ist eine schon vergeben → Fehler 1062 → ROLLBACK.
             $insert = $pdo->prepare(
                 "INSERT INTO slot_cells (court_id, cell_start, status, hold_id, hold_token_hash, device_id, expires_at, booking_id, created_at)

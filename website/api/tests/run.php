@@ -133,7 +133,11 @@ T::check('fremder Hold → held', pv_slot_status([$keys[2] => $row('hold', 'othe
 T::check('abgelaufener Hold → free', pv_slot_status([$keys[0] => $row('hold', 'other', 'h', $past)], $keys, 'me', $now)['status'] === 'free');
 $mine = array_fill_keys($keys, $row('hold', 'me', 'h1', $future));
 T::check('eigener Hold auf allen 3 Zellen → mine', pv_slot_status($mine, $keys, 'me', $now)['status'] === 'mine');
-T::check('eigener Hold teilweise → free', pv_slot_status([$keys[2] => $row('hold', 'me', 'h1', $future)], $keys, 'me', $now)['status'] === 'free');
+T::check('eigener Hold teilweise überlappt → held', pv_slot_status([$keys[2] => $row('hold', 'me', 'h1', $future)], $keys, 'me', $now)['status'] === 'held');
+T::check('7:00–8:30 überlappt 7:30–9:00', array_intersect(
+    pv_cells_for(pv_local_to_utc('2027-03-14', 420, $berlin)),
+    pv_cells_for(pv_local_to_utc('2027-03-14', 450, $berlin)),
+) !== []);
 
 echo "Codes & Validierung\n";
 $code = pv_generate_code();
